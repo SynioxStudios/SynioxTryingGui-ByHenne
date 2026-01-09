@@ -1,7 +1,7 @@
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SynioxStudios/ByYusufGui-Syniox/refs/heads/main/SynioxGui.lua%20(3).txt", true))()
 local displayName = game.Players.LocalPlayer.DisplayName
 
-local window = library:AddWindow("Syniox Public | Muscle Legends | V1 - ".. displayName, {
+local window = library:AddWindow("Syniox Public | Muscle Legends | V1 || HELLO - ".. displayName, {
     title_bar = {
         Color3.fromRGB(160, 0, 0), 
         Color3.fromRGB(40, 0, 0),  
@@ -43,16 +43,23 @@ local function manageTool(toolName)
         while _G[toolName.."On"] do
             local player = game.Players.LocalPlayer
             local character = player.Character
-            -- Tool elindeyse veya çantadaysa bulur
             local tool = player.Backpack:FindFirstChild(toolName) or (character and character:FindFirstChild(toolName))
             
             if tool then
                 if tool.Parent ~= character then
                     tool.Parent = character
                 end
-                tool:Activate() -- Kas yapması için tıklama simülasyonu
+                
+                local humanoid = character:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    for _, anim in pairs(humanoid:GetPlayingAnimationTracks()) do
+                        anim:Stop()
+                    end
+                end
+
+                tool:Activate()
             end
-            task.wait(0.1)
+            task.wait(0.05)
         end
     end)
 end
