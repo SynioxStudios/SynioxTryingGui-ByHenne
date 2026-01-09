@@ -38,29 +38,26 @@ end)
 
 local folder1 = AutoFarm:AddFolder("Tools")
 
-local function manageTool(toolName)
+local function manageTool(toolName, remoteArg)
     task.spawn(function()
         while _G[toolName.."On"] do
-            local player = game.Players.LocalPlayer
-            local character = player.Character
-            local tool = player.Backpack:FindFirstChild(toolName) or (character and character:FindFirstChild(toolName))
-            
-            if tool then
-                if tool.Parent ~= character then
-                    tool.Parent = character
-                end
-                
-                local humanoid = character:FindFirstChildOfClass("Humanoid")
-                if humanoid then
-                    local animator = humanoid:FindFirstChildOfClass("Animator")
-                    if animator then
-                        for _, track in pairs(animator:GetPlayingAnimationTracks()) do
-                            track:Stop()
-                        end
-                    end
-                end
+            local event = game:GetService("Players").LocalPlayer:FindFirstChild("muscleEvent")
+            if event then
+                event:FireServer(remoteArg)
+            end
+            task.wait(0.1)
+        end
+    end)
+end
 
-                tool:Activate()
+local folder1 = AutoFarm:AddFolder("Tools")
+
+local function manageTool(toolName, remoteArg)
+    task.spawn(function()
+        while _G[toolName.."On"] do
+            local event = game:GetService("Players").LocalPlayer:FindFirstChild("muscleEvent")
+            if event then
+                event:FireServer(remoteArg)
             end
             task.wait(0.01)
         end
@@ -69,20 +66,20 @@ end
 
 folder1:AddSwitch("Weight", function(bool)
     _G.WeightOn = bool
-    if bool then manageTool("Weight") end
+    if bool then manageTool("Weight", "rep") end
 end)
 
 folder1:AddSwitch("Pushups", function(bool)
     _G.PushupsOn = bool
-    if bool then manageTool("Pushups") end
+    if bool then manageTool("Pushups", "pushups") end
 end)
 
 folder1:AddSwitch("Handstand", function(bool)
     _G.HandstandOn = bool
-    if bool then manageTool("Handstand") end
+    if bool then manageTool("Handstand", "handstand") end
 end)
 
 folder1:AddSwitch("Situps", function(bool)
     _G.SitupsOn = bool
-    if bool then manageTool("Situps") end
+    if bool then manageTool("Situps", "situps") end
 end)
