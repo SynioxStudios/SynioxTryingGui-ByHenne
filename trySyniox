@@ -43,12 +43,15 @@ local function manageAutoFarm(toolName, isEnabled)
         while isEnabled do
             local player = game.Players.LocalPlayer
             local character = player.Character
-            local backpack = player:FindFirstChild("Backpack")
             
-            if backpack and character then
-                local tool = backpack:FindFirstChild(toolName)
+            if character and character:FindFirstChild("Humanoid") then
+                local tool = player.Backpack:FindFirstChild(toolName) or character:FindFirstChild(toolName)
+                
                 if tool then
-                    tool.Parent = character
+                    if tool.Parent ~= character then
+                        character.Humanoid:EquipTool(tool)
+                    end
+                    tool:Activate()
                 end
             end
             task.wait(0.1)
@@ -56,22 +59,22 @@ local function manageAutoFarm(toolName, isEnabled)
     end)
 end
 
-folder1:AddSwitch("Weight", function(bool)
+Folder1:AddSwitch("Weight", function(bool)
     weightOn = bool
     manageAutoFarm("Weight", weightOn)
 end)
 
-folder1:AddSwitch("Pushups", function(bool)
+Folder1:AddSwitch("Pushups", function(bool)
     pushupsOn = bool
     manageAutoFarm("Pushups", pushupsOn)
 end)
 
-folder1:AddSwitch("Handstand", function(bool)
+Folder1:AddSwitch("Handstand", function(bool)
     handstandOn = bool
     manageAutoFarm("Handstand", handstandOn)
 end)
 
-folder1:AddSwitch("Situps", function(bool)
+Folder1:AddSwitch("Situps", function(bool)
     situpsOn = bool
     manageAutoFarm("Situps", situpsOn)
 end)
