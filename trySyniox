@@ -38,43 +38,40 @@ end)
 
 local folder1 = AutoFarm:AddFolder("Tools")
 
-local function manageAutoFarm(toolName, isEnabled)
+local function manageTool(toolName)
     task.spawn(function()
-        while isEnabled do
+        while _G[toolName.."On"] do
             local player = game.Players.LocalPlayer
             local character = player.Character
+            local tool = player.Backpack:FindFirstChild(toolName) or (character and character:FindFirstChild(toolName))
             
-            if character and character:FindFirstChild("Humanoid") then
-                local tool = player.Backpack:FindFirstChild(toolName) or character:FindFirstChild(toolName)
-                
-                if tool then
-                    if tool.Parent ~= character then
-                        character.Humanoid:EquipTool(tool)
-                    end
-                    tool:Activate()
+            if tool then
+                if tool.Parent ~= character then
+                    tool.Parent = character
                 end
+                tool:Activate()
             end
             task.wait(0.1)
         end
     end)
 end
 
-Folder1:AddSwitch("Weight", function(bool)
-    weightOn = bool
-    manageAutoFarm("Weight", weightOn)
+folder1:AddSwitch("Weight", function(bool)
+    _G.WeightOn = bool
+    if bool then manageTool("Weight") end
 end)
 
-Folder1:AddSwitch("Pushups", function(bool)
-    pushupsOn = bool
-    manageAutoFarm("Pushups", pushupsOn)
+folder1:AddSwitch("Pushups", function(bool)
+    _G.PushupsOn = bool
+    if bool then manageTool("Pushups") end
 end)
 
-Folder1:AddSwitch("Handstand", function(bool)
-    handstandOn = bool
-    manageAutoFarm("Handstand", handstandOn)
+folder1:AddSwitch("Handstand", function(bool)
+    _G.HandstandOn = bool
+    if bool then manageTool("Handstand") end
 end)
 
-Folder1:AddSwitch("Situps", function(bool)
-    situpsOn = bool
-    manageAutoFarm("Situps", situpsOn)
+folder1:AddSwitch("Situps", function(bool)
+    _G.SitupsOn = bool
+    if bool then manageTool("Situps") end
 end)
