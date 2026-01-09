@@ -28,49 +28,6 @@ local AutoFarm = window:AddTab("Farm")
 
 AutoFarm:AddLabel("Op Farm")
 
--- Egg yeme
-local function eatProteinEgg()
-    local backpack = player:WaitForChild("Backpack")
-    local character = player.Character or player.CharacterAdded:Wait()
-    local egg = backpack:FindFirstChild("Protein Egg")
-    if egg then
-        egg.Parent = character
-        pcall(function()
-            egg:Activate()
-        end)
-    end
-end
-
--- 30 Dakikalık Döngü
-task.spawn(function()
-    while true do
-        if autoEat30Enabled then
-            eatProteinEgg()
-            task.wait(1800) -- 30 Dakika
-        end
-        task.wait(1)
-    end
-end)
-
-AutoFarm:AddSwitch("🥚 Auto Eat Egg 30 Min", function(state)
-    autoEat30Enabled = state
-end)
-
--- 60 Dakikalık Döngü
-task.spawn(function()
-    while true do
-        if autoEat60Enabled then
-            eatProteinEgg()
-            task.wait(3600) -- 60 Dakika
-        end
-        task.wait(1)
-    end
-end)
-
-AutoFarm:AddSwitch("🥚 Auto Eat Egg 60 Min", function(state)
-    autoEat60Enabled = state
-end)
-
 AutoFarm:AddSwitch("Auto Farm (Equip Any tool)", function(state)
     repToggle = state
     while repToggle do
