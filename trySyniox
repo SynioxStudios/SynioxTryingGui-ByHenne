@@ -1,6 +1,6 @@
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SynioxStudios/ByYusufGui-Syniox/refs/heads/main/SynioxGui.lua%20(3).txt", true))()
 
-local window = library:AddWindow("Syniox Try", {
+local window = library:AddWindow("Syniox Public | Muscle Legends | ByYusuf | V1 HELLO -".. displayName, {
     -- Başlık Çubuğu: Canlı kırmızıdan başlayıp derin siyaha süzülür
     title_bar = {
         Color3.fromRGB(160, 0, 0), -- Üst: Belirgin Kırmızı
@@ -24,9 +24,116 @@ local window = library:AddWindow("Syniox Try", {
     can_resize = true 
 })
 
-local tab1 = window:AddTab("Main") -- Name of the Tab
-tab1:Show() -- Shows the tab first when executing
+local AutoFarm = window:AddTab("Farm")
 
-tab1:AddButton("Name",function()
-	-- Code here
+AutoFarm:AddLabel("Op Farm")
+
+-- Egg yeme
+local function eatProteinEgg()
+    local backpack = player:WaitForChild("Backpack")
+    local character = player.Character or player.CharacterAdded:Wait()
+    local egg = backpack:FindFirstChild("Protein Egg")
+    if egg then
+        egg.Parent = character
+        pcall(function()
+            egg:Activate()
+        end)
+    end
+end
+
+-- 30 Dakikalık Döngü
+task.spawn(function()
+    while true do
+        if autoEat30Enabled then
+            eatProteinEgg()
+            task.wait(1800) -- 30 Dakika
+        end
+        task.wait(1)
+    end
+end)
+
+AutoFarm:AddSwitch("🥚 Auto Eat Egg 30 Min", function(state)
+    autoEat30Enabled = state
+end)
+
+-- 60 Dakikalık Döngü
+task.spawn(function()
+    while true do
+        if autoEat60Enabled then
+            eatProteinEgg()
+            task.wait(3600) -- 60 Dakika
+        end
+        task.wait(1)
+    end
+end)
+
+AutoFarm:AddSwitch("🥚 Auto Eat Egg 60 Min", function(state)
+    autoEat60Enabled = state
+end)
+
+AutoFarm:AddSwitch("Auto Farm (Equip Any tool)", function(state)
+    repToggle = state
+    while repToggle do
+        local args = { "rep" }
+        game:GetService("Players").LocalPlayer:WaitForChild("muscleEvent"):FireServer(unpack(args))
+        task.wait(0.2)
+    end
+end)
+
+local folder1 = AutoFarm:AddFolder("Tools")
+
+local weightOn = false
+folder1:AddSwitch("Weight", function(bool)
+    weightOn = bool
+    task.spawn(function()
+        while weightOn do
+            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Weight")
+            if tool then
+                tool.Parent = game.Players.LocalPlayer.Character
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+local pushupsOn = false
+folder1:AddSwitch("Pushups", function(bool)
+    pushupsOn = bool
+    task.spawn(function()
+        while pushupsOn do
+            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Pushups")
+            if tool then
+                tool.Parent = game.Players.LocalPlayer.Character
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+local handstandOn = false
+folder1:AddSwitch("Handstand", function(bool)
+    handstandOn = bool
+    task.spawn(function()
+        while handstandOn do
+            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Handstand")
+            if tool then
+                tool.Parent = game.Players.LocalPlayer.Character
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+local situpsOn = false
+folder1:AddSwitch("Situps", function(bool)
+    situpsOn = bool
+    task.spawn(function()
+        while situpsOn do
+            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Situps")
+            if tool then
+                tool.Parent = game.Players.LocalPlayer.Character
+            end
+            task.wait(0.1)
+        end
+    end)
 end)
