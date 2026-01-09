@@ -1,96 +1,78 @@
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SynioxStudios/ByYusufGui-Syniox/refs/heads/main/SynioxGui.lua%20(3).txt", true))()
+local displayName = game.Players.LocalPlayer.DisplayName
 
-local window = library:AddWindow("Syniox Public | Muscle Legends | ByYusuf | V1 HELLO -".. displayName, {
-    -- Başlık Çubuğu: Canlı kırmızıdan başlayıp derin siyaha süzülür
+local window = library:AddWindow("Syniox Public | Muscle Legends | V1 - ".. displayName, {
     title_bar = {
-        Color3.fromRGB(160, 0, 0), -- Üst: Belirgin Kırmızı
-        Color3.fromRGB(40, 0, 0),  -- Orta: Koyu Kırmızı (Geçiş noktası)
-        Color3.fromRGB(0, 0, 0)    -- Alt: Tam Siyah
+        Color3.fromRGB(160, 0, 0), 
+        Color3.fromRGB(40, 0, 0),  
+        Color3.fromRGB(0, 0, 0)    
     }, 
     title_bar_transparency = 0.1, 
-
-    -- Arka Plan: Tamamen siyah ve hafif şeffaf (Asil ve profesyonel durur)
     background = {
         Color3.fromRGB(0, 0, 0), 
         Color3.fromRGB(10, 10, 10), 
         Color3.fromRGB(20, 20, 20)
     }, 
     background_transparency = 0.1, 
-
-    -- Ana Vurgu Rengi: Seçili butonlar ve detaylar artık Petrol Mavisi değil, Kırmızı!
     main_color = Color3.fromRGB(160, 0, 0), 
-
     min_size = Vector2.new(500, 600), 
     can_resize = true 
 })
 
 local AutoFarm = window:AddTab("Farm")
-
 AutoFarm:AddLabel("Op Farm")
 
+_G.repToggle = false
 AutoFarm:AddSwitch("Auto Farm (Equip Any tool)", function(state)
-    repToggle = state
-    while repToggle do
-        local args = { "rep" }
-        game:GetService("Players").LocalPlayer:WaitForChild("muscleEvent"):FireServer(unpack(args))
-        task.wait(0.2)
-    end
+    _G.repToggle = state
+    task.spawn(function()
+        while _G.repToggle do
+            local event = game:GetService("Players").LocalPlayer:FindFirstChild("muscleEvent")
+            if event then
+                event:FireServer("rep")
+            end
+            task.wait(0.1)
+        end
+    end)
 end)
 
 local folder1 = AutoFarm:AddFolder("Tools")
 
-local weightOn = false
+local function manageTool(toolName)
+    task.spawn(function()
+        while _G[toolName.."On"] do
+            local player = game.Players.LocalPlayer
+            local character = player.Character
+            -- Tool elindeyse veya çantadaysa bulur
+            local tool = player.Backpack:FindFirstChild(toolName) or (character and character:FindFirstChild(toolName))
+            
+            if tool then
+                if tool.Parent ~= character then
+                    tool.Parent = character
+                end
+                tool:Activate() -- Kas yapması için tıklama simülasyonu
+            end
+            task.wait(0.1)
+        end
+    end)
+end
+
 folder1:AddSwitch("Weight", function(bool)
-    weightOn = bool
-    task.spawn(function()
-        while weightOn do
-            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Weight")
-            if tool then
-                tool.Parent = game.Players.LocalPlayer.Character
-            end
-            task.wait(0.1)
-        end
-    end)
+    _G.WeightOn = bool
+    if bool then manageTool("Weight") end
 end)
 
-local pushupsOn = false
 folder1:AddSwitch("Pushups", function(bool)
-    pushupsOn = bool
-    task.spawn(function()
-        while pushupsOn do
-            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Pushups")
-            if tool then
-                tool.Parent = game.Players.LocalPlayer.Character
-            end
-            task.wait(0.1)
-        end
-    end)
+    _G.PushupsOn = bool
+    if bool then manageTool("Pushups") end
 end)
 
-local handstandOn = false
 folder1:AddSwitch("Handstand", function(bool)
-    handstandOn = bool
-    task.spawn(function()
-        while handstandOn do
-            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Handstand")
-            if tool then
-                tool.Parent = game.Players.LocalPlayer.Character
-            end
-            task.wait(0.1)
-        end
-    end)
+    _G.HandstandOn = bool
+    if bool then manageTool("Handstand") end
 end)
 
-local situpsOn = false
 folder1:AddSwitch("Situps", function(bool)
-    situpsOn = bool
-    task.spawn(function()
-        while situpsOn do
-            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Situps")
-            if tool then
-                tool.Parent = game.Players.LocalPlayer.Character
-            end
-            task.wait(0.1)
-        end
-    end)
+    _G.SitupsOn = bool
+    if bool then manageTool("Situps") end
 end)
