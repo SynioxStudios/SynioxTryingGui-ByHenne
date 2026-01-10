@@ -171,13 +171,13 @@ local sizeSwitch = rebirths:AddSwitch("Auto Size 1📏", function(bool)
     end
 end, "Size 1")
 
-local sizeSwitch = rebirths:AddSwitch("Auto Size 2 📏", function(bool)
+local sizeSwitch = rebirths:AddSwitch("Auto Size 2📏", function(bool)
     _G.autoSizeActive = bool
     
     if bool then
         spawn(function()
             while _G.autoSizeActive and wait() do
-                game:GetService("ReplicatedStorage").rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", 1)
+                game:GetService("ReplicatedStorage").rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", 2)
             end
         end)
     end
