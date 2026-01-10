@@ -209,7 +209,7 @@ task.spawn(function()
     end
 end)
 
-AutoFarm:AddSwitch("🥚 Auto Eat Egg 30 Min", function(state)
+rebirths:AddSwitch("🥚 Auto Eat Egg 30 Min", function(state)
     autoEat30Enabled = state
 end)
 
@@ -224,7 +224,7 @@ task.spawn(function()
     end
 end)
 
-AutoFarm:AddSwitch("🥚 Auto Eat Egg 60 Min", function(state)
+rebirths:AddSwitch("🥚 Auto Eat Egg 60 Min", function(state)
     autoEat60Enabled = state
 end)
 
