@@ -84,6 +84,8 @@ folder1:AddSwitch("Situps", function(bool)
     if bool then manageTool("Situps") end
 end)
 
+
+
 local rebirths = window:AddTab("Rebirths")
 
 rebirths:AddTextBox("Rebirth Target", function(text)
@@ -998,7 +1000,7 @@ local showKillsButton = Killer:AddButton("Kill Counter UI", function()
 			local killsFrame = Instance.new("Frame")
 			killsFrame.Size = UDim2.new(0, 180, 0, 55)
 			killsFrame.Position = UDim2.new(0.5, -90, 0, 60)
-			killsFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 139)
+			killsFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 			killsFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			killsFrame.Active = true
 			killsFrame.Draggable = true
