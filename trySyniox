@@ -84,7 +84,55 @@ folder1:AddSwitch("Situps", function(bool)
     if bool then manageTool("Situps") end
 end)
 
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local Player = game.Players.LocalPlayer
+local RunService = game:GetService("RunService")
 
+local Yerler = {
+    ["Ana Alan"] = Vector3.new(-230.43, 8.16, -102.18),
+    ["Koşma Makinesi"] = Vector3.new(55.64, 5.16, 1947.60),
+    ["Yüksek Bölge"] = Vector3.new(4365.82, 997.14, -3632.9),
+    ["Orman Sandığı"] = Vector3.new(-8131.86, 25.77, 2818.17),
+    ["Pembe Alan"] = Vector3.new(2661.67, 19.41, 932.09)
+}
+
+local seciliYer = "Ana Alan"
+
+local AutoFarm = window:AddTab("Farm")
+AutoFarm:AddLabel("Op Farm")
+
+AutoFarm:AddDropdown("Yer Seçimi", {
+    Values = {"Ana Alan", "Koşma Makinesi", "Yüksek Bölge", "Orman Sandığı", "Pembe Alan"},
+    Default = "Ana Alan",
+    Callback = function(v)
+        seciliYer = v
+    end
+})
+
+AutoFarm:AddSwitch("Otomatik Farm Başlat", function(Value)
+    if Value then
+        local hedefPos = Yerler[seciliYer]
+        if hedefPos and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            Player.Character.HumanoidRootPart.CFrame = CFrame.new(hedefPos + Vector3.new(0, 3, 0))
+            task.wait(0.3)
+
+            local currentPos = Player.Character.HumanoidRootPart.CFrame
+            getgenv().posLock = RunService.Heartbeat:Connect(function()
+                if Player.Character:FindFirstChild("HumanoidRootPart") then
+                    Player.Character.HumanoidRootPart.CFrame = currentPos
+                end
+            end)
+
+            VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.W, false, game)
+        end
+    else
+        if getgenv().posLock then
+            getgenv().posLock:Disconnect()
+            getgenv().posLock = nil
+        end
+        VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.W, false, game)
+    end
+end)
 
 local rebirths = window:AddTab("Rebirths")
 
