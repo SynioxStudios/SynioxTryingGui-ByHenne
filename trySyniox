@@ -1102,3 +1102,117 @@ local showKillsButton = Killer:AddButton("Kill Counter UI", function()
 end)
 
 showKillsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+local LookDura = window:AddTab("Stats")
+local SelectPlayerName = ""
+
+local PlayerDrop = LookDura:AddDropdown("Select Player", function(Value)
+    SelectPlayerName = Value:match("| (.+)")
+    previousValues = {}
+end)
+
+local Playerslist = {}
+for _, Plr in pairs(game:GetService("Players"):GetPlayers()) do
+    local displayName = Plr.DisplayName .. " | " .. Plr.Name
+    table.insert(Playerslist, displayName)
+end
+for _, AddPlr in ipairs(Playerslist) do
+    PlayerDrop:Add(AddPlr)
+end
+
+local function FormatNumberWithCommas(number)
+    local formatted = tostring(number):reverse():gsub("(%d%d%d)", "%1,"):reverse()
+    return formatted:gsub("^,", "")
+end
+
+local function FormatAbbreviated(number)
+    local abbreviations = {"", "K", "M", "B", "T", "Qa", "Qi"}
+    local abbreviationIndex = 1
+    while number >= 1000 and abbreviationIndex < #abbreviations do
+        number = number / 1000
+        abbreviationIndex = abbreviationIndex + 1
+    end
+    return string.format("%.2f", number) .. abbreviations[abbreviationIndex]
+end
+
+local function FormatDisplay(value)
+    local normal = FormatNumberWithCommas(value)
+    local abbreviated = FormatAbbreviated(value)
+    return "[ " .. normal .. " | " .. abbreviated .. " ]"
+end
+
+local previousValues = {}
+
+local Update = LookDura:AddLabel("")
+local Update1 = LookDura:AddLabel("")
+local Update2 = LookDura:AddLabel("")
+local Update3 = LookDura:AddLabel("")
+local Update4 = LookDura:AddLabel("")
+local Update5 = LookDura:AddLabel("")
+local Update6 = LookDura:AddLabel("")
+local Update9 = LookDura:AddLabel("")
+local Update10 = LookDura:AddLabel("")
+local Update11 = LookDura:AddLabel("")
+local Update12 = LookDura:AddLabel("")
+local Update13 = LookDura:AddLabel("")
+local UpdateHTK = LookDura:AddLabel("")
+
+task.spawn(function()
+    while task.wait(0.2) do
+        if SelectPlayerName ~= "" then
+            local player = game.Players:FindFirstChild(SelectPlayerName)
+            local localPlayer = game.Players.LocalPlayer
+            if player and localPlayer then
+                if player:FindFirstChild("Gems") then
+                    Update1.Text = "💎 Gems: " .. FormatDisplay(player.Gems.Value)
+                end
+                if player:FindFirstChild("Agility") then
+                    Update3.Text = "⚡ Agility: " .. FormatDisplay(player.Agility.Value)
+                end
+                if player:FindFirstChild("Durability") then
+                    Update4.Text = "🛡️ Durability: " .. FormatDisplay(player.Durability.Value)
+                end
+                if player:FindFirstChild("muscleKingTime") then
+                    Update6.Text = "👑 Muscle King Time: " .. FormatDisplay(player.muscleKingTime.Value)
+                end
+                if player:FindFirstChild("customSize") then
+                    Update10.Text = "📏 Custom Size: " .. FormatDisplay(player.customSize.Value)
+                end
+                if player:FindFirstChild("customSpeed") then
+                    Update11.Text = "🏎️ Custom Speed: " .. FormatDisplay(player.customSpeed.Value)
+                end
+                if player:FindFirstChild("evilKarma") then
+                    Update12.Text = "😈 Evil Karma: " .. FormatDisplay(player.evilKarma.Value)
+                end
+                if player:FindFirstChild("goodKarma") then
+                    Update13.Text = "✨ Good Karma: " .. FormatDisplay(player.goodKarma.Value)
+                end
+
+                local leaderstats = player:FindFirstChild("leaderstats")
+                if leaderstats then
+                    if leaderstats:FindFirstChild("Strength") then
+                        Update.Text = "💪 Strength: " .. FormatDisplay(leaderstats.Strength.Value)
+                    end
+                    if leaderstats:FindFirstChild("Rebirths") then
+                        Update2.Text = "🔄 Rebirth: " .. FormatDisplay(leaderstats.Rebirths.Value)
+                    end
+                    if leaderstats:FindFirstChild("Kills") then
+                        Update5.Text = "💀 Kills: " .. FormatDisplay(leaderstats.Kills.Value)
+                    end
+                end
+
+                if player:FindFirstChild("currentMap") then
+                    Update9.Text = "📍 Map: " .. tostring(player.currentMap.Value)
+                else
+                    Update9.Text = "📍 Map: Unknown"
+                end
+
+                local myStr = localPlayer.leaderstats:FindFirstChild("Strength") and localPlayer.leaderstats.Strength.Value or 1
+                local tarDur = player:FindFirstChild("Durability") and player.Durability.Value or 1
+                local htkCalc = math.ceil(tarDur / myStr)
+                if htkCalc < 1 then htkCalc = 1 end
+                UpdateHTK.Text = "🥊 Hits To Kill: " .. FormatNumberWithCommas(htkCalc)
+            end
+        end
+    end
+end)
