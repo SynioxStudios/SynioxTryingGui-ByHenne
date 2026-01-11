@@ -293,7 +293,7 @@ rebirths:AddSwitch("🥚 Auto Eat Egg 60 Min", function(state)
     autoEat60Enabled = state
 end)
 
-fastStrengthFolder:AddSwitch("Hide All Frames", function(bool)
+rebirths:AddSwitch("Hide All Frames", function(bool)
     local rSto = game:GetService("ReplicatedStorage")
     for _, obj in pairs(rSto:GetChildren()) do
         if obj.Name:match("Frame$") then
