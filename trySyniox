@@ -97,6 +97,16 @@ local Yerler = {
 }
 
 local seciliYer = "Ana Alan"
+local posLockConnection
+
+local function lockPlayerPosition(cframe)
+    if posLockConnection then posLockConnection:Disconnect() end
+    posLockConnection = RunService.Heartbeat:Connect(function()
+        if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            Player.Character.HumanoidRootPart.CFrame = cframe
+        end
+    end)
+end
 
 AutoFarm:AddDropdown("Yer Seçimi", {
     Values = {"Ana Alan", "Koşma Makinesi", "Yüksek Bölge", "Jungle Treadmil", "Pembe Alan"},
@@ -106,26 +116,24 @@ AutoFarm:AddDropdown("Yer Seçimi", {
     end
 })
 
-AutoFarm:AddSwitch("Otomatik Farm Başlat", function(Value)
-    if Value then
+AutoFarm:AddSwitch("Otomatik Farm Başlat", function(bool)
+    if bool then
         local hedefPos = Yerler[seciliYer]
         if hedefPos and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
             Player.Character.HumanoidRootPart.CFrame = CFrame.new(hedefPos + Vector3.new(0, 3, 0))
             task.wait(0.3)
-
-            local currentPos = Player.Character.HumanoidRootPart.CFrame
-            getgenv().posLock = RunService.Heartbeat:Connect(function()
-                if Player.Character:FindFirstChild("HumanoidRootPart") then
-                    Player.Character.HumanoidRootPart.CFrame = currentPos
-                end
-            end)
-
+            
+            local hrp = Player.Character:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                local savedPos = hrp.CFrame
+                lockPlayerPosition(savedPos)
+            end
             VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.W, false, game)
         end
     else
-        if getgenv().posLock then
-            getgenv().posLock:Disconnect()
-            getgenv().posLock = nil
+        if posLockConnection then
+            posLockConnection:Disconnect()
+            posLockConnection = nil
         end
         VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.W, false, game)
     end
