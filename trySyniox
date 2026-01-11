@@ -92,14 +92,14 @@ local Yerler = {
     ["Ana Alan"] = Vector3.new(-230.43, 8.16, -102.18),
     ["Koşma Makinesi"] = Vector3.new(55.64, 5.16, 1947.60),
     ["Yüksek Bölge"] = Vector3.new(4365.82, 997.14, -3632.9),
-    ["Orman Sandığı"] = Vector3.new(-8131.86, 25.77, 2818.17),
+    ["Jungle Treadmil"] = Vector3.new(-8131.86, 25.77, 2818.17),
     ["Pembe Alan"] = Vector3.new(2661.67, 19.41, 932.09)
 }
 
 local seciliYer = "Ana Alan"
 
 AutoFarm:AddDropdown("Yer Seçimi", {
-    Values = {"Ana Alan", "Koşma Makinesi", "Yüksek Bölge", "Orman Sandığı", "Pembe Alan"},
+    Values = {"Ana Alan", "Koşma Makinesi", "Yüksek Bölge", "Jungle Treadmil", "Pembe Alan"},
     Default = "Ana Alan",
     Callback = function(v)
         seciliYer = v
