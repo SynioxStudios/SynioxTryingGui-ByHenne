@@ -85,8 +85,8 @@ folder1:AddSwitch("Situps", function(bool)
 end)
 
 local VirtualInputManager = game:GetService("VirtualInputManager")
-local Player = game.Players.LocalPlayer
-local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
 
 local Locations = {
     ["Jungle Treadmill"] = Vector3.new(-8131.86, 25.77, 2818.17),
@@ -97,48 +97,32 @@ local Locations = {
 }
 
 local selectedLocation = "Jungle Treadmill"
-local posLockConnection
 
-local function lockPlayerPosition(cframe)
-    if posLockConnection then posLockConnection:Disconnect() end
-    posLockConnection = RunService.Heartbeat:Connect(function()
-        if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-            Player.Character.HumanoidRootPart.CFrame = cframe
+if AutoFarm and AutoFarm.AddDropdown then
+    AutoFarm:AddDropdown("Select Location", {
+        Values = {"Jungle Treadmill", "Mythical Gym", "Legends Gym", "Spawn", "Starter Treadmill"},
+        Default = "Jungle Treadmill",
+        Callback = function(v)
+            selectedLocation = v
+        end
+    })
+end
+
+if AutoFarm and AutoFarm.AddSwitch then
+    AutoFarm:AddSwitch("Auto Farm", function(bool)
+        if bool then
+            local targetPos = Locations[selectedLocation]
+            if targetPos and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+                local humanoidRootPart = Player.Character.HumanoidRootPart
+                humanoidRootPart.CFrame = CFrame.new(targetPos + Vector3.new(0, 3, 0))
+                task.wait(0.3)
+                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.W, false, game)
+            end
+        else
+            VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.W, false, game)
         end
     end)
 end
-
--- Yazıların görünmesi için liste tanımlamasını Dropdown içinde doğrudan yapıyoruz
-AutoFarm:AddDropdown("Select Location", {
-    Values = {"Jungle Treadmill", "Mythical Gym", "Legends Gym", "Spawn", "Starter Treadmill"},
-    Default = "Jungle Treadmill",
-    Callback = function(v)
-        selectedLocation = v
-    end
-})
-
-AutoFarm:AddSwitch("Auto Farm", function(bool)
-    if bool then
-        local targetPos = Locations[selectedLocation]
-        local hrp = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
-        
-        if targetPos and hrp then
-            hrp.CFrame = CFrame.new(targetPos + Vector3.new(0, 3, 0))
-            task.wait(0.3)
-            
-            local savedPos = hrp.CFrame
-            lockPlayerPosition(savedPos)
-            
-            VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.W, false, game)
-        end
-    else
-        if posLockConnection then
-            posLockConnection:Disconnect()
-            posLockConnection = nil
-        end
-        VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.W, false, game)
-    end
-end)
 
 local rebirths = window:AddTab("Rebirths")
 
