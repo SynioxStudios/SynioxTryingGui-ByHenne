@@ -1605,3 +1605,83 @@ Misc:AddSwitch("Anti Afk", function(Value)
         if oldGui then oldGui:Destroy() end
     end
 end)
+
+local AutoTradeTab = window:AddTab("Auto Trade")
+AutoTradeTab:AddLabel("Advanced Trade System")
+
+local selectedPlayer = ""
+local selectedPet = "Neon Guardian"
+local playerList = {}
+
+for _, v in pairs(game.Players:GetPlayers()) do
+    if v ~= game.Players.LocalPlayer then
+        table.insert(playerList, v.Name)
+    end
+end
+
+local playerDropdown = AutoTradeTab:AddDropdown("Select Player", function(val)
+    selectedPlayer = val
+end)
+playerDropdown:SetOptions(playerList)
+
+local petDropdown = AutoTradeTab:AddDropdown("Select Pet", function(text)
+    selectedPet = text
+end)
+
+petDropdown:Add("Neon Guardian")
+petDropdown:Add("Blue Birdie")
+petDropdown:Add("Blue Bunny")
+petDropdown:Add("Blue Firecaster")
+petDropdown:Add("Blue Pheonix")
+petDropdown:Add("Crimson Falcon")
+petDropdown:Add("Cybernetic Showdown Dragon")
+petDropdown:Add("Dark Golem")
+petDropdown:Add("Dark Legends Manticore")
+petDropdown:Add("Dark Vampy")
+petDropdown:Add("Darkstar Hunter")
+petDropdown:Add("Eternal Strike Leviathan")
+petDropdown:Add("Frostwave Legends Penguin")
+petDropdown:Add("Gold Warrior")
+petDropdown:Add("Golden Pheonix")
+petDropdown:Add("Golden Viking")
+petDropdown:Add("Green Butterfly")
+petDropdown:Add("Green Firecaster")
+petDropdown:Add("Infernal Dragon")
+petDropdown:Add("Lightning Strike Phantom")
+petDropdown:Add("Magic Butterfly")
+petDropdown:Add("Muscle Sensei")
+petDropdown:Add("Orange Hedgehog")
+petDropdown:Add("Orange Pegasus")
+petDropdown:Add("Phantom Genesis Dragon")
+petDropdown:Add("Purple Dragon")
+petDropdown:Add("Purple Falcon")
+petDropdown:Add("Red Dragon")
+petDropdown:Add("Red Firecaster")
+petDropdown:Add("Red Kitty")
+petDropdown:Add("Silver Dog")
+petDropdown:Add("Ultimate Supernova Pegasus")
+petDropdown:Add("Ultra Birdie")
+petDropdown:Add("White Pegasus")
+petDropdown:Add("White Pheonix")
+petDropdown:Add("Yellow Butterfly")
+
+_G.AutoTradeActive = false
+AutoTradeTab:AddSwitch("Start Auto Trade & Accept", function(state)
+    _G.AutoTradeActive = state
+    task.spawn(function()
+        while _G.AutoTradeActive do
+            local target = game.Players:FindFirstChild(selectedPlayer)
+            if target then
+                local event = game:GetService("Players").LocalPlayer:FindFirstChild("muscleEvent")
+                if event then
+                    event:FireServer("tradeRequest", target)
+                    task.wait(0.01)
+                    event:FireServer("addPet", selectedPet)
+                    task.wait(0.01)
+                    event:FireServer("acceptTrade")
+                end
+            end
+            task.wait(0.5)
+        end
+    end)
+end)
