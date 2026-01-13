@@ -1274,69 +1274,6 @@ task.spawn(function()
     end
 end)
 
-    local existingTool = character:FindFirstChildOfClass("Tool")
-    if existingTool then
-        existingTool.Parent = backpack
-    end
-
-    local tool = backpack:FindFirstChild(toolName) or character:FindFirstChild(toolName)
-    if tool and tool.Parent ~= character then
-        tool.Parent = character
-    end
-end
-
-local function handleRock(rock, leftHand)
-    if rock then
-        rock.Size = Vector3.new(2, 1, 1)
-        rock.Transparency = 1
-        rock.CanCollide = false
-
-        if rock:FindFirstChild("rockGui") then
-            for _, v in pairs(rock.rockGui:GetChildren()) do
-                v.Visible = false
-            end
-        end
-
-        for _, particle in ipairs({"rockEmitter", "hoopParticle", "lavaParticle"}) do
-            if rock:FindFirstChild(particle) then
-                rock[particle]:Destroy()
-            end
-        end
-
-        rock.CFrame = leftHand.CFrame
-
-        local touchPart = rock:FindFirstChild("TouchPart")
-        if touchPart then
-            touchPart.CFrame = leftHand.CFrame
-            local fireTouch = Instance.new("RemoteEvent")
-            fireTouch.Parent = rock
-            fireTouch:FireServer(touchPart)
-        end
-    end
-end
-
-local function autoRockFarm(rockName, toggleVar)
-    local player = game.Players.LocalPlayer
-    local backpack = player:WaitForChild("Backpack")
-    local character = player.Character or player.CharacterAdded:Wait()
-    local leftHand = character:WaitForChild("LeftHand")
-    local rock = game.Workspace.machinesFolder:FindFirstChild(rockName)
-    rock = rock and rock:FindFirstChild("Rock")
-
-    _G[toggleVar] = true
-
-    while _G[toggleVar] do
-        for _, toolName in ipairs({"Punch", "Pushups"}) do
-            equipTool(toolName, character, backpack)
-            task.wait(0.05)
-        end
-
-        handleRock(rock, leftHand)
-        player:WaitForChild("muscleEvent"):FireServer("rep")
-        task.wait(0.1)
-    end
-end
-
 local Rock = window:AddTab("Rock")
 
 function gettool()
