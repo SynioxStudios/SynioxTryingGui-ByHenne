@@ -1611,68 +1611,50 @@ AutoTradeTab:AddLabel("Advanced Trade System")
 
 local selectedPlayer = ""
 local selectedPet = "Neon Guardian"
-local playerList = {}
+local players = game:GetService("Players")
 
-for _, v in pairs(game.Players:GetPlayers()) do
-    if v ~= game.Players.LocalPlayer then
-        table.insert(playerList, v.Name)
-    end
-end
-
+-- 1. SERVERDEKİ OYUNCULARIN DROPDOWN'U
 local playerDropdown = AutoTradeTab:AddDropdown("Select Player", function(val)
     selectedPlayer = val
 end)
-playerDropdown:SetOptions(playerList)
 
-local petDropdown = AutoTradeTab:AddDropdown("Select Pet", function(text)
-    selectedPet = text
+local function updatePlayers()
+    local pNames = {}
+    for _, v in pairs(players:GetPlayers()) do
+        if v ~= players.LocalPlayer then
+            table.insert(pNames, v.Name)
+        end
+    end
+    playerDropdown:SetOptions(pNames)
+end
+updatePlayers()
+
+-- 2. PETLERİN DROPDOWN'U
+local petList = {
+    "Neon Guardian", "Blue Birdie", "Blue Bunny", "Blue Firecaster", "Blue Pheonix",
+    "Crimson Falcon", "Cybernetic Showdown Dragon", "Dark Golem", "Dark Legends Manticore",
+    "Dark Vampy", "Darkstar Hunter", "Eternal Strike Leviathan", "Frostwave Legends Penguin",
+    "Gold Warrior", "Golden Pheonix", "Golden Viking", "Green Butterfly", "Green Firecaster",
+    "Infernal Dragon", "Lightning Strike Phantom", "Magic Butterfly", "Muscle Sensei",
+    "Orange Hedgehog", "Orange Pegasus", "Phantom Genesis Dragon", "Purple Dragon",
+    "Purple Falcon", "Red Dragon", "Red Firecaster", "Red Kitty", "Silver Dog",
+    "Ultimate Supernova Pegasus", "Ultra Birdie", "White Pegasus", "White Pheonix", "Yellow Butterfly"
+}
+
+local petDropdown = AutoTradeTab:AddDropdown("Select Pet", function(val)
+    selectedPet = val
 end)
+petDropdown:SetOptions(petList)
 
-petDropdown:Add("Neon Guardian")
-petDropdown:Add("Blue Birdie")
-petDropdown:Add("Blue Bunny")
-petDropdown:Add("Blue Firecaster")
-petDropdown:Add("Blue Pheonix")
-petDropdown:Add("Crimson Falcon")
-petDropdown:Add("Cybernetic Showdown Dragon")
-petDropdown:Add("Dark Golem")
-petDropdown:Add("Dark Legends Manticore")
-petDropdown:Add("Dark Vampy")
-petDropdown:Add("Darkstar Hunter")
-petDropdown:Add("Eternal Strike Leviathan")
-petDropdown:Add("Frostwave Legends Penguin")
-petDropdown:Add("Gold Warrior")
-petDropdown:Add("Golden Pheonix")
-petDropdown:Add("Golden Viking")
-petDropdown:Add("Green Butterfly")
-petDropdown:Add("Green Firecaster")
-petDropdown:Add("Infernal Dragon")
-petDropdown:Add("Lightning Strike Phantom")
-petDropdown:Add("Magic Butterfly")
-petDropdown:Add("Muscle Sensei")
-petDropdown:Add("Orange Hedgehog")
-petDropdown:Add("Orange Pegasus")
-petDropdown:Add("Phantom Genesis Dragon")
-petDropdown:Add("Purple Dragon")
-petDropdown:Add("Purple Falcon")
-petDropdown:Add("Red Dragon")
-petDropdown:Add("Red Firecaster")
-petDropdown:Add("Red Kitty")
-petDropdown:Add("Silver Dog")
-petDropdown:Add("Ultimate Supernova Pegasus")
-petDropdown:Add("Ultra Birdie")
-petDropdown:Add("White Pegasus")
-petDropdown:Add("White Pheonix")
-petDropdown:Add("Yellow Butterfly")
-
+-- 3. AUTO TRADE SWITCH (İSTEK + PET + ACCEPT)
 _G.AutoTradeActive = false
 AutoTradeTab:AddSwitch("Start Auto Trade & Accept", function(state)
     _G.AutoTradeActive = state
     task.spawn(function()
         while _G.AutoTradeActive do
-            local target = game.Players:FindFirstChild(selectedPlayer)
+            local target = players:FindFirstChild(selectedPlayer)
             if target then
-                local event = game:GetService("Players").LocalPlayer:FindFirstChild("muscleEvent")
+                local event = players.LocalPlayer:FindFirstChild("muscleEvent")
                 if event then
                     event:FireServer("tradeRequest", target)
                     task.wait(0.01)
