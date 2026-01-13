@@ -86,40 +86,50 @@ end)
 
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 local Player = Players.LocalPlayer
 
 local Locations = {
     ["Jungle Treadmill"] = Vector3.new(-8131.86, 25.77, 2818.17),
-    ["Mythical Gym"] = Vector3.new(2661.67, 19.41, 932.09),
-    ["Legends Gym"] = Vector3.new(4365.82, 997.14, -3632.9),
+    ["Mythical Treadmill"] = Vector3.new(2661.67, 19.41, 932.09),
+    ["Legends Treadmill"] = Vector3.new(4365.82, 997.14, -3632.9),
     ["Spawn"] = Vector3.new(-230.43, 8.16, -102.18),
     ["Starter Treadmill"] = Vector3.new(55.64, 5.16, 1947.60)
 }
 
-local selectedLocation = "Jungle Treadmill"
+local posLockConnection = nil
 
-if AutoFarm and AutoFarm.AddDropdown then
-    AutoFarm:AddDropdown("Select Location", {
-        Values = {"Jungle Treadmill", "Mythical Gym", "Legends Gym", "Spawn", "Starter Treadmill"},
-        Default = "Jungle Treadmill",
-        Callback = function(v)
-            selectedLocation = v
+local function lockAndSimulate(targetCFrame)
+    if posLockConnection then posLockConnection:Disconnect() end
+    posLockConnection = RunService.Heartbeat:Connect(function()
+        if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            Player.Character.HumanoidRootPart.CFrame = targetCFrame
+            VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.W, false, game)
         end
-    })
+    end)
 end
 
-if AutoFarm and AutoFarm.AddSwitch then
-    AutoFarm:AddSwitch("Auto Farm", function(bool)
+local function stopAll()
+    if posLockConnection then
+        posLockConnection:Disconnect()
+        posLockConnection = nil
+    end
+    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.W, false, game)
+end
+
+local FarmFolder = AutoFarm:AddFolder("Treadmill")
+
+for name, pos in pairs(Locations) do
+    FarmFolder:AddSwitch(name, function(bool)
         if bool then
-            local targetPos = Locations[selectedLocation]
-            if targetPos and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-                local humanoidRootPart = Player.Character.HumanoidRootPart
-                humanoidRootPart.CFrame = CFrame.new(targetPos + Vector3.new(0, 3, 0))
+            local hrp = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                hrp.CFrame = CFrame.new(pos + Vector3.new(0, 3, 0))
                 task.wait(0.3)
-                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.W, false, game)
+                lockAndSimulate(hrp.CFrame)
             end
         else
-            VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.W, false, game)
+            stopAll()
         end
     end)
 end
