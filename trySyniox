@@ -1609,52 +1609,86 @@ end)
 local AutoTradeTab = window:AddTab("Auto Trade")
 AutoTradeTab:AddLabel("Advanced Trade System")
 
-local selectedPlayer = ""
+local SelectPlayerName = ""
 local selectedPet = "Neon Guardian"
-local players = game:GetService("Players")
 
--- 1. SERVERDEKİ OYUNCULARIN DROPDOWN'U
-local playerDropdown = AutoTradeTab:AddDropdown("Select Player", function(val)
-    selectedPlayer = val
+-- 1. OYUNCU BULMA (SENİN KODUNUN UYARLANMIŞ HALİ)
+local PlayerDrop = AutoTradeTab:AddDropdown("Select Player", function(Value)
+    SelectPlayerName = Value:match("| (.+)")
 end)
 
-local function updatePlayers()
-    local pNames = {}
-    for _, v in pairs(players:GetPlayers()) do
-        if v ~= players.LocalPlayer then
-            table.insert(pNames, v.Name)
+local function UpdatePlayerList()
+    PlayerDrop:Clear() -- Listeyi temizle ki eskiler kalmasın
+    local Playerslist = {}
+    for _, Plr in pairs(game:GetService("Players"):GetPlayers()) do
+        if Plr ~= game:GetService("Players").LocalPlayer then
+            local displayName = Plr.DisplayName .. " | " .. Plr.Name
+            table.insert(Playerslist, displayName)
         end
     end
-    playerDropdown:SetOptions(pNames)
+    for _, AddPlr in ipairs(Playerslist) do
+        PlayerDrop:Add(AddPlr)
+    end
 end
-updatePlayers()
+UpdatePlayerList()
 
--- 2. PETLERİN DROPDOWN'U
-local petList = {
-    "Neon Guardian", "Blue Birdie", "Blue Bunny", "Blue Firecaster", "Blue Pheonix",
-    "Crimson Falcon", "Cybernetic Showdown Dragon", "Dark Golem", "Dark Legends Manticore",
-    "Dark Vampy", "Darkstar Hunter", "Eternal Strike Leviathan", "Frostwave Legends Penguin",
-    "Gold Warrior", "Golden Pheonix", "Golden Viking", "Green Butterfly", "Green Firecaster",
-    "Infernal Dragon", "Lightning Strike Phantom", "Magic Butterfly", "Muscle Sensei",
-    "Orange Hedgehog", "Orange Pegasus", "Phantom Genesis Dragon", "Purple Dragon",
-    "Purple Falcon", "Red Dragon", "Red Firecaster", "Red Kitty", "Silver Dog",
-    "Ultimate Supernova Pegasus", "Ultra Birdie", "White Pegasus", "White Pheonix", "Yellow Butterfly"
+-- 2. PET SEÇİMİ
+local petDropdown = AutoTradeTab:AddDropdown("Select Pet", function(text)
+    selectedPet = text
+end)
+
+local petsList = {
+    "Neon Guardian", 
+    "Blue Birdie", 
+    "Blue Bunny", 
+    "Blue Firecaster", 
+    "Blue Pheonix",
+    "Crimson Falcon",
+    "Cybernetic Showdown Dragon", 
+    "Dark Golem", 
+    "Dark Legends Manticore",
+    "Dark Vampy", 
+    "Darkstar Hunter", 
+    "Eternal Strike Leviathan", 
+    "Frostwave Legends Penguin",
+    "Gold Warrior", 
+    "Golden Pheonix", 
+    "Golden Viking", 
+    "Green Butterfly", 
+    "Green Firecaster",
+    "Infernal Dragon", 
+    "Lightning Strike Phantom", 
+    "Magic Butterfly", 
+    "Muscle Sensei",
+    "Orange Hedgehog", 
+    "Orange Pegasus", 
+    "Phantom Genesis Dragon", 
+    "Purple Dragon",
+    "Purple Falcon", 
+    "Red Dragon", 
+    "Red Firecaster", 
+    "Red Kitty", 
+    "Silver Dog",
+    "Ultimate Supernova Pegasus", 
+    "Ultra Birdie", 
+    "White Pegasus", 
+    "White Pheonix", 
+    "Yellow Butterfly"
 }
 
-local petDropdown = AutoTradeTab:AddDropdown("Select Pet", function(val)
-    selectedPet = val
-end)
-petDropdown:SetOptions(petList)
+for _, petName in ipairs(petsList) do
+    petDropdown:Add(petName)
+end
 
--- 3. AUTO TRADE SWITCH (İSTEK + PET + ACCEPT)
+-- 3. AUTO TRADE SWITCH
 _G.AutoTradeActive = false
 AutoTradeTab:AddSwitch("Start Auto Trade & Accept", function(state)
     _G.AutoTradeActive = state
     task.spawn(function()
         while _G.AutoTradeActive do
-            local target = players:FindFirstChild(selectedPlayer)
+            local target = game.Players:FindFirstChild(SelectPlayerName)
             if target then
-                local event = players.LocalPlayer:FindFirstChild("muscleEvent")
+                local event = game:GetService("Players").LocalPlayer:FindFirstChild("muscleEvent")
                 if event then
                     event:FireServer("tradeRequest", target)
                     task.wait(0.01)
