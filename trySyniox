@@ -1607,33 +1607,34 @@ Misc:AddSwitch("Anti Afk", function(Value)
 end)
 
 local AutoTradeTab = window:AddTab("Auto Trade")
-AutoTradeTab:AddLabel("Advanced Trade System")
+AutoTradeTab:AddLabel("Advanced Trade System 31")
 
 local SelectPlayerName = ""
 local selectedPet = "Blue Birdie"
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
--- 1. Dynamic Player Selection
+-- 1. Optimized Player Dropdown (Adding each player line by line)
 local PlayerDrop = AutoTradeTab:AddDropdown("Select Player", function(Value)
     SelectPlayerName = Value:match("| (.+)") or Value
 end)
 
 local function UpdatePlayerList()
-    PlayerDrop:Clear()
+    PlayerDrop:Clear() -- Clear the list first to avoid duplicates
     for _, Plr in ipairs(Players:GetPlayers()) do
         if Plr ~= LocalPlayer then
             local displayName = Plr.DisplayName .. " | " .. Plr.Name
-            PlayerDrop:Add(displayName)
+            PlayerDrop:Add(displayName) -- Adding each player one by one
         end
     end
 end
 
+-- Track players joining/leaving to keep the list fresh
 UpdatePlayerList()
 Players.PlayerAdded:Connect(UpdatePlayerList)
 Players.PlayerRemoving:Connect(UpdatePlayerList)
 
--- 2. Alphabetical Pet Selection
+-- 2. Alphabetical Pet Dropdown (Every pet on its own line)
 local petDropdown = AutoTradeTab:AddDropdown("Select Pet", function(text)
     selectedPet = text
 end)
@@ -1675,7 +1676,7 @@ petDropdown:Add("White Pegasus")
 petDropdown:Add("White Pheonix")
 petDropdown:Add("Yellow Butterfly")
 
--- 3. The Optimized Main Switch (0.05 Speed)
+-- 3. The Linked Switch (Controls both choices with 0.05 speed)
 _G.AutoTradeActive = false
 AutoTradeTab:AddSwitch("Start Auto Trade & Accept", function(state)
     _G.AutoTradeActive = state
@@ -1685,7 +1686,7 @@ AutoTradeTab:AddSwitch("Start Auto Trade & Accept", function(state)
             if target and selectedPet ~= "" then
                 local event = LocalPlayer:FindFirstChild("muscleEvent")
                 if event then
-                    -- Optimized speed: 0.05 for stability and speed
+                    -- High-speed server requests (0.05s)
                     event:FireServer("tradeRequest", target)
                     task.wait(0.05)
                     event:FireServer("addPet", selectedPet)
@@ -1693,7 +1694,7 @@ AutoTradeTab:AddSwitch("Start Auto Trade & Accept", function(state)
                     event:FireServer("acceptTrade")
                 end
             end
-            task.wait(0.5) -- Cool down for next request cycle
+            task.wait(0.5)
         end
     end)
 end)
