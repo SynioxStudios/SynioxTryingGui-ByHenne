@@ -1613,66 +1613,58 @@ local Player = Players.LocalPlayer
 local TradeTab = window:AddTab("Trade")
 
 local selectedTarget = nil
-local selectedPet = nil
+local selectedPet = "Neon Guardian"
 
-TradeTab:AddDropdown("Choose Player", {
-    Values = (function()
-        local tbl = {}
-        for _, v in pairs(Players:GetPlayers()) do
-            if v ~= Player then 
-                table.insert(tbl, v.Name) 
-            end
-        end
-        return tbl
-    end)(),
-    callback = function(v) 
-        selectedTarget = v 
-    end
-})
+local playerDropdown = TradeTab:AddDropdown("Choose Player", function(v)
+    selectedTarget = v
+end)
 
-TradeTab:AddDropdown("Choose Pet", {
-    Values = {
-        "Neon Guardian",
-        "Blue Birdie",
-        "Blue Bunny",
-        "Blue Firecaster",
-        "Blue Pheonix",
-        "Crimson Falcon",
-        "Cybernetic Showdown Dragon",
-        "Dark Golem",
-        "Dark Legends Manticore",
-        "Dark Vampy",
-        "Darkstar Hunter",
-        "Eternal Strike Leviathan",
-        "Frostwave Legends Penguin",
-        "Gold Warrior",
-        "Golden Pheonix",
-        "Golden Viking",
-        "Green Butterfly",
-        "Green Firecaster",
-        "Infernal Dragon",
-        "Lightning Strike Phantom",
-        "Magic Butterfly",
-        "Muscle Sensei",
-        "Orange Hedgehog",
-        "Orange Pegasus",
-        "Phantom Genesis Dragon",
-        "Purple Dragon",
-        "Purple Falcon",
-        "Red Dragon",
-        "Red Firecaster",
-        "Red Kitty",
-        "Silver Dog",
-        "Ultimate Supernova Pegasus",
-        "Ultra Birdie",
-        "White Pegasus",
-        "White Pheonix",
-        "Yellow Butterfly"
-    },
-    callback = function(v) 
-        selectedPet = v 
+for _, v in pairs(Players:GetPlayers()) do
+    if v ~= Player then 
+        playerDropdown:Add(v.Name) 
     end
-})
+end
+
+local selectionDropdown = TradeTab:AddDropdown("Choose Pet", function(v)
+    selectedPet = v
+end)
+
+selectionDropdown:Add("Neon Guardian")
+selectionDropdown:Add("Blue Birdie")
+selectionDropdown:Add("Blue Bunny")
+selectionDropdown:Add("Blue Firecaster")
+selectionDropdown:Add("Blue Pheonix")
+selectionDropdown:Add("Crimson Falcon")
+selectionDropdown:Add("Cybernetic Showdown Dragon")
+selectionDropdown:Add("Dark Golem")
+selectionDropdown:Add("Dark Legends Manticore")
+selectionDropdown:Add("Dark Vampy")
+selectionDropdown:Add("Darkstar Hunter")
+selectionDropdown:Add("Eternal Strike Leviathan")
+selectionDropdown:Add("Frostwave Legends Penguin")
+selectionDropdown:Add("Gold Warrior")
+selectionDropdown:Add("Golden Pheonix")
+selectionDropdown:Add("Golden Viking")
+selectionDropdown:Add("Green Butterfly")
+selectionDropdown:Add("Green Firecaster")
+selectionDropdown:Add("Infernal Dragon")
+selectionDropdown:Add("Lightning Strike Phantom")
+selectionDropdown:Add("Magic Butterfly")
+selectionDropdown:Add("Muscle Sensei")
+selectionDropdown:Add("Orange Hedgehog")
+selectionDropdown:Add("Orange Pegasus")
+selectionDropdown:Add("Phantom Genesis Dragon")
+selectionDropdown:Add("Purple Dragon")
+selectionDropdown:Add("Purple Falcon")
+selectionDropdown:Add("Red Dragon")
+selectionDropdown:Add("Red Firecaster")
+selectionDropdown:Add("Red Kitty")
+selectionDropdown:Add("Silver Dog")
+selectionDropdown:Add("Ultimate Supernova Pegasus")
+selectionDropdown:Add("Ultra Birdie")
+selectionDropdown:Add("White Pegasus")
+selectionDropdown:Add("White Pheonix")
+selectionDropdown:Add("Yellow Butterfly")
 
 TradeTab:AddSwitch("Auto Trade", function(Value)
     getgenv().autoTrade = Value
