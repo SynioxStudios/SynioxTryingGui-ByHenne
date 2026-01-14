@@ -1613,17 +1613,24 @@ local Player = Players.LocalPlayer
 local TradeTab = window:AddTab("Trade")
 
 local selectedTarget = nil
-local selectedPet = "Neon Guardian"
+local selectedPet = nil
 
 local playerDropdown = TradeTab:AddDropdown("Choose Player", function(v)
     selectedTarget = v
 end)
 
-for _, v in pairs(Players:GetPlayers()) do
-    if v ~= Player then 
-        playerDropdown:Add(v.Name) 
+local function updatePlayerList()
+    playerDropdown:Clear()
+    for _, v in pairs(Players:GetPlayers()) do
+        if v ~= Player then 
+            playerDropdown:Add(v.Name) 
+        end
     end
 end
+
+updatePlayerList()
+Players.PlayerAdded:Connect(updatePlayerList)
+Players.PlayerRemoving:Connect(updatePlayerList)
 
 local selectionDropdown = TradeTab:AddDropdown("Choose Pet", function(v)
     selectedPet = v
@@ -1675,23 +1682,27 @@ TradeTab:AddSwitch("Auto Trade", function(Value)
                 if targetPlayer then
                     ReplicatedStorage.tradeEvent:FireServer("request", targetPlayer)
                     
-                    local tradeWindow = nil
-                    repeat
-                        task.wait(0.1)
-                        tradeWindow = Player.PlayerGui:FindFirstChild("tradeGui")
-                    until (tradeWindow and tradeWindow.Enabled) or not getgenv().autoTrade
-                    
-                    if tradeWindow and tradeWindow.Enabled then
-                        local petInBackpack = Player.Backpack:FindFirstChild(selectedPet)
-                        if petInBackpack then
-                            ReplicatedStorage.tradeEvent:FireServer("add", petInBackpack)
-                            task.wait(0.2)
-                            ReplicatedStorage.tradeEvent:FireServer("accept")
+                    local tradeGui = Player.PlayerGui:WaitForChild("tradeGui", 5)
+                    if tradeGui then
+                        repeat task.wait() until tradeGui.Enabled or not getgenv().autoTrade
+                        
+                        if tradeGui.Enabled then
+                            local pet = Player.Backpack:FindFirstChild(selectedPet)
+                            if pet then
+                                for i = 1, 3 do 
+                                    ReplicatedStorage.tradeEvent:FireServer("add", pet)
+                                    task.wait(0.1)
+                                end
+                                task.wait(0.2)
+                                ReplicatedStorage.tradeEvent:FireServer("accept")
+                                task.wait(0.5)
+                                ReplicatedStorage.tradeEvent:FireServer("confirm")
+                            end
                         end
                     end
                 end
             end
-            task.wait(2)
+            task.wait(1)
         end
     end)
 end)
