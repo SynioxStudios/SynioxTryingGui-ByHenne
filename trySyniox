@@ -1615,59 +1615,63 @@ local TradeTab = window:AddTab("Trade")
 local selectedTarget = nil
 local selectedPet = nil
 
-local petList = {
-    "Neon Guardian",
-    "Blue Birdie",
-    "Blue Bunny",
-    "Blue Firecaster",
-    "Blue Pheonix",
-    "Crimson Falcon",
-    "Cybernetic Showdown Dragon",
-    "Dark Golem",
-    "Dark Legends Manticore",
-    "Dark Vampy",
-    "Darkstar Hunter",
-    "Eternal Strike Leviathan",
-    "Frostwave Legends Penguin",
-    "Gold Warrior",
-    "Golden Pheonix",
-    "Golden Viking",
-    "Green Butterfly",
-    "Green Firecaster",
-    "Infernal Dragon",
-    "Lightning Strike Phantom",
-    "Magic Butterfly",
-    "Muscle Sensei",
-    "Orange Hedgehog",
-    "Orange Pegasus",
-    "Phantom Genesis Dragon",
-    "Purple Dragon",
-    "Purple Falcon",
-    "Red Dragon",
-    "Red Firecaster",
-    "Red Kitty",
-    "Silver Dog",
-    "Ultimate Supernova Pegasus",
-    "Ultra Birdie",
-    "White Pegasus",
-    "White Pheonix",
-    "Yellow Butterfly"
-}
-
 TradeTab:AddDropdown("Choose Player", {
     Values = (function()
         local tbl = {}
         for _, v in pairs(Players:GetPlayers()) do
-            if v ~= Player then table.insert(tbl, v.Name) end
+            if v ~= Player then 
+                table.insert(tbl, v.Name) 
+            end
         end
         return tbl
     end)(),
-    callback = function(v) selectedTarget = v end
+    callback = function(v) 
+        selectedTarget = v 
+    end
 })
 
 TradeTab:AddDropdown("Choose Pet", {
-    Values = petList,
-    callback = function(v) selectedPet = v end
+    Values = {
+        "Neon Guardian",
+        "Blue Birdie",
+        "Blue Bunny",
+        "Blue Firecaster",
+        "Blue Pheonix",
+        "Crimson Falcon",
+        "Cybernetic Showdown Dragon",
+        "Dark Golem",
+        "Dark Legends Manticore",
+        "Dark Vampy",
+        "Darkstar Hunter",
+        "Eternal Strike Leviathan",
+        "Frostwave Legends Penguin",
+        "Gold Warrior",
+        "Golden Pheonix",
+        "Golden Viking",
+        "Green Butterfly",
+        "Green Firecaster",
+        "Infernal Dragon",
+        "Lightning Strike Phantom",
+        "Magic Butterfly",
+        "Muscle Sensei",
+        "Orange Hedgehog",
+        "Orange Pegasus",
+        "Phantom Genesis Dragon",
+        "Purple Dragon",
+        "Purple Falcon",
+        "Red Dragon",
+        "Red Firecaster",
+        "Red Kitty",
+        "Silver Dog",
+        "Ultimate Supernova Pegasus",
+        "Ultra Birdie",
+        "White Pegasus",
+        "White Pheonix",
+        "Yellow Butterfly"
+    },
+    callback = function(v) 
+        selectedPet = v 
+    end
 })
 
 TradeTab:AddSwitch("Auto Trade", function(Value)
