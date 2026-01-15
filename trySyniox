@@ -1513,6 +1513,7 @@ Misc:AddSwitch("Anti Afk", function(Value)
     if Value then
         _G.AntiAfkActive = true
         
+        -- Anti-AFK Mekanizması
         local vu = game:GetService("VirtualUser")
         antiAfkConnection = game:GetService("Players").LocalPlayer.Idled:Connect(function()
             if _G.AntiAfkActive then
@@ -1521,6 +1522,7 @@ Misc:AddSwitch("Anti Afk", function(Value)
             end
         end)
 
+        -- GUI Oluşturma
         local ScreenGui = Instance.new("ScreenGui")
         local MainFrame = Instance.new("Frame")
         local UICorner = Instance.new("UICorner")
@@ -1579,22 +1581,26 @@ Misc:AddSwitch("Anti Afk", function(Value)
         SetupLabel(FPSLabel, "🚀 FPS: 0", UDim2.new(0, 0, 0, 62))
         SetupLabel(MSLabel, "📡 MS: 0", UDim2.new(0, 0, 0, 89))
 
+        -- Güncelleme Döngüsü (Geliştirilmiş)
         local startTime = os.time()
         local RunService = game:GetService("RunService")
         local Stats = game:GetService("Stats")
         
         task.spawn(function()
             while _G.AntiAfkActive do
+                -- Zaman hesaplama
                 local diff = os.time() - startTime
                 TimerLabel.Text = string.format("⏳ Time: %02d:%02d:%02d", math.floor(diff/3600), math.floor((diff%3600)/60), diff%60)
                 
+                -- FPS Hesaplama (RenderStepped ile en doğru sonucu verir)
                 local fps = math.floor(1 / RunService.RenderStepped:Wait())
                 FPSLabel.Text = "🚀 FPS: " .. fps
                 
+                -- Ping (MS) Hesaplama
                 local ping = math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
                 MSLabel.Text = "📡 MS: " .. ping
                 
-                task.wait(0.5)
+                task.wait(0.5) -- Her yarım saniyede bir güncelle (Performans için)
             end
         end)
 
