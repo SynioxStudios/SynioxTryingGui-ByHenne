@@ -1639,23 +1639,22 @@ end
 game:GetService("Players").PlayerAdded:Connect(addNewPlayer)
 
 local petDropdown = pets:AddDropdown("Select Pet to Trade", function(v)
-    local name = v:match("^(.-)%s*%(") or v
-    selectedPet = name:gsub("%s+$", "")
+    selectedPet = v
 end)
 
-local petList = {
-    "Blue Birdie (Basic)", "Orange Hedgehog (Basic)", "Red Kitty (Basic)", "Blue Bunny (Basic)", "Silver Dog (Basic)",
-    "Dark Vampy (Advanced)", "Dark Golem (Advanced)", "Green Butterfly (Advanced)", "Yellow Butterfly (Advanced)",
-    "Crimson Falcon (Rare)", "Purple Dragon (Rare)", "Orange Pegasus (Rare)", "Purple Falcon (Rare)", "Red Dragon (Rare)",
-    "White Pegasus (Rare)", "Frostwave Legends Penguin (Rare)", "Phantom Genesis Dragon (Rare)", "Eternal Strike Leviathan (Rare)",
-    "Blue Pheonix (Epic)", "Blue Firecaster (Epic)", "Golden Pheonix (Epic)", "Red Firecaster (Epic)", "Green Firecaster (Epic)",
-    "White Pheonix (Epic)", "Dark Legends Manticore (Epic)", "Ultimate Supernova Pegasus (Epic)", "Lightning Strike Phantom (Epic)", "Golden Viking (Epic)",
-    "Infernal Dragon (Unique)", "Ultra Birdie (Unique)", "Magic Butterfly (Unique)", "Aether Spirit Bunny (Unique)",
-    "Cybernetic Showdown Dragon (Unique)", "Darkstar Hunter (Unique)", "Muscle Sensei (Unique)", "Neon Guardian (Unique)"
+local rawPetList = {
+    "Blue Birdie", "Orange Hedgehog", "Red Kitty", "Blue Bunny", "Silver Dog",
+    "Dark Vampy", "Dark Golem", "Green Butterfly", "Yellow Butterfly",
+    "Crimson Falcon", "Purple Dragon", "Orange Pegasus", "Purple Falcon", "Red Dragon",
+    "White Pegasus", "Frostwave Legends Penguin", "Phantom Genesis Dragon", "Eternal Strike Leviathan",
+    "Blue Pheonix", "Blue Firecaster", "Golden Pheonix", "Red Firecaster", "Green Firecaster",
+    "White Pheonix", "Dark Legends Manticore", "Ultimate Supernova Pegasus", "Lightning Strike Phantom", "Golden Viking",
+    "Infernal Dragon", "Ultra Birdie", "Magic Butterfly", "Aether Spirit Bunny",
+    "Cybernetic Showdown Dragon", "Darkstar Hunter", "Muscle Sensei", "Neon Guardian"
 }
 
-for i = 1, #petList do
-    petDropdown:Add(petList[i])
+for i = 1, #rawPetList do
+    petDropdown:Add(rawPetList[i])
 end
 
 local function getPetInstance(name)
@@ -1700,13 +1699,11 @@ pets:AddSwitch("Auto Trade", function(state)
                         if tradeGui.Enabled then
                             local petObj = getPetInstance(selectedPet)
                             if petObj then
-                                -- Senin verdiğin offerItem eventi:
                                 for i = 1, 4 do 
                                     tEvent:FireServer("offerItem", petObj)
                                     task.wait(0.15)
                                 end
                                 task.wait(0.5)
-                                -- Senin verdiğin acceptTrade eventi:
                                 tEvent:FireServer("acceptTrade")
                                 
                                 repeat task.wait(0.5) until (not tradeGui.Enabled) or not getgenv().autoTrade
@@ -1719,10 +1716,6 @@ pets:AddSwitch("Auto Trade", function(state)
         end
     end)
 end)
-
-pets:AddLabel("")
-pets:AddLabel("YouTube Tanıtımı Eklendi")
-pets:AddLabel("Discord: https://discord.gg/FsG2cGay")
 
 local Misc = window:AddTab("Misc")
 
