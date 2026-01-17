@@ -1655,57 +1655,43 @@ for i = 1, #rawPetList do
     petDropdown:Add(rawPetList[i])
 end
 
-local function getPetInstance(name)
-    local playerPets = game:GetService("Players").LocalPlayer:FindFirstChild("PlayerPets")
-    if playerPets then
-        local folders = playerPets:GetChildren()
-        for i = 1, #folders do
-            local folder = folders[i]
-            if folder:IsA("Folder") then
-                local petsInFolder = folder:GetChildren()
-                for j = 1, #petsInFolder do
-                    local pet = petsInFolder[j]
-                    if pet.Name == name then return pet end
-                end
-            end
-        end
-    end
-    return nil
-end
-
 pets:AddSwitch("Auto Trade", function(state)
     getgenv().autoTrade = state
     task.spawn(function()
         while getgenv().autoTrade do
-            if selectedTarget and selectedPet then
+            if selectedTarget then
                 local targetPlayer = game:GetService("Players"):FindFirstChild(selectedTarget)
-                local tEvent = game:GetService("ReplicatedStorage"):FindFirstChild("rEvents") and game:GetService("ReplicatedStorage").rEvents:FindFirstChild("tradingEvent")
+                local tEvent = game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("tradingEvent")
                 
                 if targetPlayer and tEvent then
+                    -- Önce trade isteği atar
                     tEvent:FireServer("sendTradeRequest", targetPlayer)
                     
                     local pGui = game:GetService("Players").LocalPlayer.PlayerGui
                     local tradeGui = pGui:WaitForChild("tradeGui", 2) or pGui:WaitForChild("TradeGui", 2)
                     
                     if tradeGui then
+                        -- Pencerenin açılmasını bekler
                         local timer = 0
-                        while not tradeGui.Enabled and getgenv().autoTrade and timer < 25 do
+                        while not tradeGui.Enabled and getgenv().autoTrade and timer < 20 do
                             task.wait(0.5)
                             timer = timer + 0.5
                         end
                         
                         if tradeGui.Enabled then
-                            local petObj = getPetInstance(selectedPet)
-                            if petObj then
-                                for i = 1, 4 do 
-                                    tEvent:FireServer("offerItem", petObj)
-                                    task.wait(0.15)
-                                end
-                                task.wait(0.5)
-                                tEvent:FireServer("acceptTrade")
-                                
-                                repeat task.wait(0.5) until (not tradeGui.Enabled) or not getgenv().autoTrade
+                            -- Senin verdiğin pet koyma eventi (4 adet)
+                            for i = 1, 4 do 
+                                tEvent:FireServer("offerItem", "pet")
+                                task.wait(0.2)
                             end
+                            
+                            task.wait(0.5)
+                            
+                            -- Senin verdiğin kabul etme eventi
+                            tEvent:FireServer("acceptTrade")
+                            
+                            -- Takas bitene kadar bekle ki döngü sapıtmasın
+                            repeat task.wait(0.5) until (not tradeGui.Enabled) or not getgenv().autoTrade
                         end
                     end
                 end
@@ -1714,6 +1700,9 @@ pets:AddSwitch("Auto Trade", function(state)
         end
     end)
 end)
+
+pets:AddLabel("")
+pets:AddLabel("Discord: https://discord.gg/FsG2cGay")
 
 local Misc = window:AddTab("Misc")
 
