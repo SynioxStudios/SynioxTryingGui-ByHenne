@@ -1846,99 +1846,55 @@ end)
 
 pets:AddLabel("Deneme")
 
-local tabStrength = Window:AddTab("Fast Strength")
+local tabFarming = window:AddTab("Pack Farm")
 
-tabStrength:AddLabel("--- TRAINING CONTROLS ---").TextSize = 23
+local player = game.Players.LocalPlayer
+local muscleEvent = player:WaitForChild("muscleEvent")
+local runService = game:GetService("RunService")
 
-local statusTraining = tabStrength:AddLabel("FAST FARM OFF 💤")
-statusTraining.TextColor = Color3.fromRGB(255, 0, 0)
-
-tabStrength:AddSwitch("Overdrive Training", function(state)
+tabFarming:AddSwitch("Overdrive Training", function(state)
     runFastRep = state
     if state then
-        statusTraining.Text = "FAST FARM ON 🚀"
-        statusTraining.TextColor = Color3.fromRGB(0, 255, 0)
         task.spawn(function()
             while runFastRep do
-                player.muscleEvent:FireServer("rep")
-                game:GetService("RunService").Heartbeat:Wait()
+                muscleEvent:FireServer("rep")
+                runService.Heartbeat:Wait()
             end
         end)
-    else
-        statusTraining.Text = "FAST FARM OFF 💤"
-        statusTraining.TextColor = Color3.fromRGB(255, 0, 0)
     end
 end)
 
-tabStrength:AddLabel("--- TRAINING UTILITIES ---").TextSize = 20
-
-tabStrength:AddSwitch("Nutrient Injection (Auto Egg)", function(state)
+tabFarming:AddSwitch("Nutrient Injection (Auto Egg)", function(state)
     autoEatEnabled = state
 end)
 
-tabStrength:AddButton("Wild Workout (Jungle Lift)", function()
-    local character = player.Character
-    if character and character:FindFirstChild("HumanoidRootPart") then
-        character.HumanoidRootPart.CFrame = CFrame.new(-8666, 34, 2070)
-        task.wait(0.2)
-        local u = game:GetService("VirtualInputManager")
-        u:SendKeyEvent(true, "E", false, game)
-        task.wait(0.1)
-        u:SendKeyEvent(false, "E", false, game)
+tabFarming:AddSwitch("Stealth Frames (Hide UI)", function(bool)
+    local rSto = game:GetService("ReplicatedStorage")
+    for _, obj in pairs(rSto:GetChildren()) do
+        if obj.Name:match("Frame$") then
+            obj.Visible = not bool
+        end
     end
 end)
 
-tabStrength:AddSwitch("Position Anchor (Lock Pos)", function(Value)
-    if Value then
-        local currentPos = player.Character.HumanoidRootPart.CFrame
-        getgenv().posLock = game:GetService("RunService").Heartbeat:Connect(function()
-            if player.Character:FindFirstChild("HumanoidRootPart") then
-                player.Character.HumanoidRootPart.CFrame = currentPos
-            end
-        end)
-    else
-        if getgenv().posLock then getgenv().posLock:Disconnect() end
+tabFarming:AddButton("Ultra Performance Mode", function()
+    local playerGui = player:WaitForChild("PlayerGui")
+    local lighting = game:GetService("Lighting")
+    for _, gui in pairs(playerGui:GetChildren()) do
+        if gui:IsA("ScreenGui") then gui:Destroy() end
     end
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj:IsA("ParticleEmitter") or obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") then
+            obj:Destroy()
+        end
+    end
+    lighting.Brightness = 0
+    lighting.GlobalShadows = false
 end)
 
-local tabRebirth = Window:AddTab("Fast Rebirth")
-
-tabRebirth:AddLabel("--- EVOLUTION STATS ---").TextSize = 23
-
-local leaderstats = player:WaitForChild("leaderstats")
-local rebirthsStat = leaderstats:WaitForChild("Rebirths")
-local footerTimeLabel = tabRebirth:AddLabel("Session: 0d 0h 0m 0s")
-local footerRebirthsLabel = tabRebirth:AddLabel("Total Rebirths: 0")
-local footerRebirthsGainedLabel = tabRebirth:AddLabel("Rebirths Gained: 0")
-local startTime = tick()
-local initialRebirths = rebirthsStat.Value
-
-task.spawn(function()
-    while true do
-        local elapsed = tick() - startTime
-        local d, h, m, s = math.floor(elapsed/86400), math.floor((elapsed%86400)/3600), math.floor((elapsed%3600)/60), math.floor(elapsed%60)
-        footerTimeLabel.Text = string.format("Session: %dd %dh %dm %ds", d, h, m, s)
-        task.wait(1)
-    end
-end)
-
-local function updateRebirths()
-    footerRebirthsLabel.Text = "Total Rebirths: " .. rebirthsStat.Value
-    footerRebirthsGainedLabel.Text = "Rebirths Gained: " .. (rebirthsStat.Value - initialRebirths)
-end
-rebirthsStat.Changed:Connect(updateRebirths)
-updateRebirths()
-
-tabRebirth:AddLabel("--- AUTO EVOLUTION ---").TextSize = 20
-
-local statusEvolution = tabRebirth:AddLabel("REBIRTH OFF 💤")
-statusEvolution.TextColor = Color3.fromRGB(255, 0, 0)
-
-tabRebirth:AddSwitch("Infinite Evolution (Auto Rebirth)", function(bool)
+tabFarming:AddSwitch("Infinite Evolution", function(bool)
     fastRebirth = bool
     if bool then
-        statusEvolution.Text = "REBIRTH ON 🚀"
-        statusEvolution.TextColor = Color3.fromRGB(0, 255, 0)
         task.spawn(function()
             local RS = game:GetService("ReplicatedStorage")
             local function equipPet(name)
@@ -1958,7 +1914,7 @@ tabRebirth:AddSwitch("Infinite Evolution (Auto Rebirth)", function(bool)
                 while fastRebirth do
                     if player.leaderstats.Strength.Value >= neededStr then break end
                     player.muscleEvent:FireServer("rep")
-                    game:GetService("RunService").Heartbeat:Wait()
+                    runService.Heartbeat:Wait()
                 end
                 equipPet("Tribal Overlord")
                 task.wait(0.2)
@@ -1966,36 +1922,32 @@ tabRebirth:AddSwitch("Infinite Evolution (Auto Rebirth)", function(bool)
                 task.wait(0.5)
             end
         end)
+    end
+end)
+
+tabFarming:AddButton("Wild Workout (Jungle Lift)", function()
+    local character = player.Character
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        character.HumanoidRootPart.CFrame = CFrame.new(-8666, 34, 2070)
+        task.wait(0.2)
+        local u = game:GetService("VirtualInputManager")
+        u:SendKeyEvent(true, "E", false, game)
+        task.wait(0.1)
+        u:SendKeyEvent(false, "E", false, game)
+    end
+end)
+
+tabFarming:AddSwitch("Position Anchor (Lock Pos)", function(Value)
+    if Value then
+        local currentPos = player.Character.HumanoidRootPart.CFrame
+        getgenv().posLock = runService.Heartbeat:Connect(function()
+            if player.Character:FindFirstChild("HumanoidRootPart") then
+                player.Character.HumanoidRootPart.CFrame = currentPos
+            end
+        end)
     else
-        statusEvolution.Text = "REBIRTH OFF 💤"
-        statusEvolution.TextColor = Color3.fromRGB(255, 0, 0)
+        if getgenv().posLock then getgenv().posLock:Disconnect() end
     end
-end)
-
-tabRebirth:AddLabel("--- OPTIMIZATION ---").TextSize = 20
-
-tabRebirth:AddSwitch("Stealth Frames (Hide UI)", function(bool)
-    local rSto = game:GetService("ReplicatedStorage")
-    for _, obj in pairs(rSto:GetChildren()) do
-        if obj.Name:match("Frame$") then
-            obj.Visible = not bool
-        end
-    end
-end)
-
-tabRebirth:AddButton("Ultra Performance Mode", function()
-    local playerGui = player:WaitForChild("PlayerGui")
-    local lighting = game:GetService("Lighting")
-    for _, gui in pairs(playerGui:GetChildren()) do
-        if gui:IsA("ScreenGui") then gui:Destroy() end
-    end
-    for _, obj in pairs(workspace:GetDescendants()) do
-        if obj:IsA("ParticleEmitter") or obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") then
-            obj:Destroy()
-        end
-    end
-    lighting.Brightness = 0
-    lighting.GlobalShadows = false
 end)
 
 local Misc = window:AddTab("Misc")
