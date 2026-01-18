@@ -1846,139 +1846,76 @@ end)
 
 pets:AddLabel("Deneme")
 
-local tabFarming = window:AddTab("Pack Farm")
-
-tabFarming:AddLabel("Fast Farming").TextSize = 23
-
 local player = game.Players.LocalPlayer
 local muscleEvent = player:WaitForChild("muscleEvent")
-local runFastRep = false
-local repsPerTick = 30
+local runService = game:GetService("RunService")
 
-local function getPing()
-    local stats = game:GetService("Stats")
-    local pingStat = stats:FindFirstChild("PerformanceStats") and stats.PerformanceStats:FindFirstChild("Ping")
-    return pingStat and pingStat:GetValue() or 0
-end
+local tabStrength = Window:AddTab("Fast Strength")
+local tabRebirth = Window:AddTab("Fast Rebirth")
 
-local function fastRepLoop()
-    while runFastRep do
-        local startTime = tick()
-        while tick() - startTime < 0.75 and runFastRep do
-            for i = 1, repsPerTick do
-                muscleEvent:FireServer("rep")
-            end
-            task.wait(0.02)
-        end
-        while runFastRep and getPing() >= 100 do
-            task.wait(1)
-        end
-    end
-end
+tabStrength:AddLabel("--- TRAINING CONTROLS ---").TextSize = 23
 
-tabFarming:AddSwitch("Fast Strength", function(state)
+local statusTraining = tabStrength:AddLabel("FAST FARM OFF 💤")
+statusTraining.TextColor = Color3.fromRGB(255, 0, 0)
+
+tabStrength:AddSwitch("Overdrive Training", function(state)
     runFastRep = state
-    if runFastRep then
-        task.spawn(fastRepLoop)
-    end
-end)
-
-tabFarming:AddLabel("Useful").TextSize = 23
-
-local autoEatEnabled = false
-local lastEggTime = 0
-
-local function hasActiveEgg()
-    local char = player.Character or player.CharacterAdded:Wait()
-    for _, child in pairs(char:GetChildren()) do
-        if child.Name == "ProteinEggEffect" or child.Name:find("ProteinEgg") or child.Name:find("EggBuff") then
-            return true
-        end
-    end
-    return false
-end
-
-local function eatProteinEgg()
-    local backpack = player:WaitForChild("Backpack")
-    if hasActiveEgg() then
-        lastEggTime = tick()
-        return false
-    end
-    local egg = backpack:FindFirstChild("Protein Egg")
-    if egg then
-        local character = player.Character or player.CharacterAdded:Wait()
-        egg.Parent = character
-        pcall(function() egg:Activate() end)
-        lastEggTime = tick()
-        return true
-    end
-    return false
-end
-
-task.spawn(function()
-    while true do
-        if autoEatEnabled then
-            if not hasActiveEgg() and tick() - lastEggTime >= 1800 then
-                eatProteinEgg()
+    if state then
+        statusTraining.Text = "FAST FARM ON 🚀"
+        statusTraining.TextColor = Color3.fromRGB(0, 255, 0)
+        task.spawn(function()
+            while runFastRep do
+                muscleEvent:FireServer("rep")
+                runService.Heartbeat:Wait()
             end
-            task.wait(5)
-        else
-            task.wait(1)
-        end
+        end)
+    else
+        statusTraining.Text = "FAST FARM OFF 💤"
+        statusTraining.TextColor = Color3.fromRGB(255, 0, 0)
     end
 end)
 
-tabFarming:AddSwitch("Auto Eat Eggs", function(state)
+tabStrength:AddLabel("--- UTILITIES ---").TextSize = 20
+
+tabStrength:AddSwitch("Nutrient Injection (Auto Egg)", function(state)
     autoEatEnabled = state
 end)
 
-tabFarming:AddSwitch("Hide All Frames", function(bool)
-    local rSto = game:GetService("ReplicatedStorage")
-    for _, obj in pairs(rSto:GetChildren()) do
-        if obj.Name:match("Frame$") then
-            obj.Visible = not bool
-        end
+tabStrength:AddButton("Wild Workout (Jungle Lift)", function()
+    local character = player.Character
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        character.HumanoidRootPart.CFrame = CFrame.new(-8666, 34, 2070)
+        task.wait(0.2)
+        local u = game:GetService("VirtualInputManager")
+        u:SendKeyEvent(true, "E", false, game)
+        task.wait(0.1)
+        u:SendKeyEvent(false, "E", false, game)
     end
 end)
 
-tabFarming:AddButton("Full Optimization", function()
-    local playerGui = player:WaitForChild("PlayerGui")
-    local lighting = game:GetService("Lighting")
-    for _, gui in pairs(playerGui:GetChildren()) do
-        if gui:IsA("ScreenGui") then gui:Destroy() end
-    end
-    local function darkenSky()
-        for _, v in pairs(lighting:GetChildren()) do
-            if v:IsA("Sky") then v:Destroy() end
-        end
-        local darkSky = Instance.new("Sky")
-        darkSky.Name = "DarkSky"
-        darkSky.SkyboxBk, darkSky.SkyboxDn, darkSky.SkyboxFt, darkSky.SkyboxLf, darkSky.SkyboxRt, darkSky.SkyboxUp = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0", "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
-        darkSky.Parent = lighting
-        lighting.Brightness, lighting.ClockTime, lighting.OutdoorAmbient, lighting.Ambient, lighting.FogColor, lighting.FogEnd = 0, 0, Color3.new(0,0,0), Color3.new(0,0,0), Color3.new(0,0,0), 100
-        task.spawn(function()
-            while true do
-                wait(5)
-                if not lighting:FindFirstChild("DarkSky") then darkSky:Clone().Parent = lighting end
-                lighting.Brightness, lighting.ClockTime = 0, 0
+tabStrength:AddSwitch("Position Anchor (Lock Pos)", function(Value)
+    if Value then
+        local currentPos = player.Character.HumanoidRootPart.CFrame
+        getgenv().posLock = runService.Heartbeat:Connect(function()
+            if player.Character:FindFirstChild("HumanoidRootPart") then
+                player.Character.HumanoidRootPart.CFrame = currentPos
             end
         end)
+    else
+        if getgenv().posLock then getgenv().posLock:Disconnect() end
     end
-    for _, obj in pairs(workspace:GetDescendants()) do
-        if obj:IsA("ParticleEmitter") or obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") then
-            obj:Destroy()
-        end
-    end
-    darkenSky()
 end)
 
-tabFarming:AddLabel("Fast Rebirths").TextSize = 23
-local fastStrengthFolder = tabFarming:AddFolder("Fast Rebirths Functions")
+tabRebirth:AddLabel("--- EVOLUTION CONTROLS ---").TextSize = 23
+
+local statusEvolution = tabRebirth:AddLabel("REBIRTH OFF 💤")
+statusEvolution.TextColor = Color3.fromRGB(255, 0, 0)
+
 local leaderstats = player:WaitForChild("leaderstats")
 local rebirthsStat = leaderstats:WaitForChild("Rebirths")
-local footerTimeLabel = fastStrengthFolder:AddLabel("0d 0h 0m 0s")
-local footerRebirthsLabel = fastStrengthFolder:AddLabel("Rebirths: 0")
-local footerRebirthsGainedLabel = fastStrengthFolder:AddLabel("Rebirths Gained: 0")
+local footerTimeLabel = tabRebirth:AddLabel("0d 0h 0m 0s")
+local footerRebirthsLabel = tabRebirth:AddLabel("Rebirths: 0")
+local footerRebirthsGainedLabel = tabRebirth:AddLabel("Rebirths Gained: 0")
 local startTime = tick()
 local initialRebirths = rebirthsStat.Value
 
@@ -1997,99 +1934,72 @@ local function updateRebirths()
 end
 rebirthsStat.Changed:Connect(updateRebirths)
 
-fastStrengthFolder:AddSwitch("Fast Rebirth", function(bool)
+tabRebirth:AddSwitch("Infinite Evolution (Auto Rebirth)", function(bool)
     fastRebirth = bool
-    if fastRebirth then
+    if bool then
+        statusEvolution.Text = "REBIRTH ON 🚀"
+        statusEvolution.TextColor = Color3.fromRGB(0, 255, 0)
         task.spawn(function()
             local RS = game:GetService("ReplicatedStorage")
-            local function unequipAllPets()
-                for _, folder in pairs(player.petsFolder:GetChildren()) do
-                    if folder:IsA("Folder") then
-                        for _, pet in pairs(folder:GetChildren()) do
-                            RS.rEvents.equipPetEvent:FireServer("unequipPet", pet)
-                        end
-                    end
-                end
-                task.wait(0.1)
-            end
-            local function equipPetByName(name)
-                unequipAllPets()
-                task.wait(0.01)
+            local function equipPet(name)
                 for _, pet in pairs(player.petsFolder.Unique:GetChildren()) do
                     if pet.Name == name then
                         RS.rEvents.equipPetEvent:FireServer("equipPet", pet)
                     end
                 end
             end
-            local function findMachine(machineName)
-                local machine = workspace.machinesFolder:FindFirstChild(machineName)
-                if not machine then
-                    for _, f in pairs(workspace:GetChildren()) do
-                        if f:IsA("Folder") and f.Name:find("machines") then
-                            machine = f:FindFirstChild(machineName)
-                            if machine then break end
-                        end
-                    end
-                end
-                return machine
-            end
-            local function pressE()
-                local u = game:GetService("VirtualInputManager")
-                u:SendKeyEvent(true, "E", false, game)
-                task.wait(0.1)
-                u:SendKeyEvent(false, "E", false, game)
-            end
-
+            
             while fastRebirth do
                 local reb = player.leaderstats.Rebirths.Value
                 local neededStr = 10000 + (5000 * reb)
+                
                 if player.ultimatesFolder:FindFirstChild("Golden Rebirth") then
                     neededStr = math.floor(neededStr * (1 - (player.ultimatesFolder["Golden Rebirth"].Value * 0.1)))
                 end
-                unequipAllPets()
-                equipPetByName("Swift Samurai")
-                
-                while player.leaderstats.Strength.Value < neededStr and fastRebirth do
-                    local diff = neededStr - player.leaderstats.Strength.Value
-                    if diff > 1000 then
-                        for _ = 1, 10 do player.muscleEvent:FireServer("rep") end
-                    else
-                        player.muscleEvent:FireServer("rep")
-                    end
-                    task.wait()
+
+                equipPet("Swift Samurai")
+                while fastRebirth do
+                    if player.leaderstats.Strength.Value >= neededStr then break end
+                    player.muscleEvent:FireServer("rep")
+                    runService.Heartbeat:Wait()
                 end
 
-                unequipAllPets()
-                equipPetByName("Tribal Overlord")
-                local machine = findMachine("Jungle Bar Lift")
-                if machine and machine:FindFirstChild("interactSeat") then
-                    player.Character.HumanoidRootPart.CFrame = machine.interactSeat.CFrame * CFrame.new(0, 3, 0)
-                    repeat task.wait(0.1) pressE() until player.Character.Humanoid.Sit or not fastRebirth
-                end
-                local beforeRebirth = player.leaderstats.Rebirths.Value
-                repeat
-                    RS.rEvents.rebirthRemote:InvokeServer("rebirthRequest")
-                    task.wait(0.1)
-                until player.leaderstats.Rebirths.Value > beforeRebirth or not fastRebirth
-            end
-        end)
-    end
-end)
-
-fastStrengthFolder:AddSwitch("Lock Position", function(Value)
-    if Value then
-        local currentPos = player.Character.HumanoidRootPart.CFrame
-        getgenv().posLock = game:GetService("RunService").Heartbeat:Connect(function()
-            if player.Character:FindFirstChild("HumanoidRootPart") then
-                player.Character.HumanoidRootPart.CFrame = currentPos
+                equipPet("Tribal Overlord")
+                task.wait(0.2)
+                RS.rEvents.rebirthRemote:InvokeServer("rebirthRequest")
+                task.wait(0.5)
             end
         end)
     else
-        if getgenv().posLock then
-            getgenv().posLock:Disconnect()
-            getgenv().posLock = nil
+        statusEvolution.Text = "REBIRTH OFF 💤"
+        statusEvolution.TextColor = Color3.fromRGB(255, 0, 0)
+    end
+end)
+
+tabRebirth:AddLabel("--- OPTIMIZATION ---").TextSize = 20
+
+tabRebirth:AddSwitch("Stealth Frames (Hide UI)", function(bool)
+    local rSto = game:GetService("ReplicatedStorage")
+    for _, obj in pairs(rSto:GetChildren()) do
+        if obj.Name:match("Frame$") then
+            obj.Visible = not bool
         end
     end
+end)
+
+tabRebirth:AddButton("Ultra Performance Mode", function()
+    local playerGui = player:WaitForChild("PlayerGui")
+    local lighting = game:GetService("Lighting")
+    for _, gui in pairs(playerGui:GetChildren()) do
+        if gui:IsA("ScreenGui") then gui:Destroy() end
+    end
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj:IsA("ParticleEmitter") or obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") then
+            obj:Destroy()
+        end
+    end
+    lighting.Brightness = 0
+    lighting.GlobalShadows = false
 end)
 
 local Misc = window:AddTab("Misc")
