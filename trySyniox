@@ -1619,8 +1619,6 @@ local pets = pets
 local selectedEvolvePet = ""
 local autoEvolvePet = false
 
-pets:AddLabel("Auto Evolve System")
-
 local evolvePetDropdown = pets:AddDropdown("Select Pet to Evolve", function(text)
     selectedEvolvePet = text
 end)
@@ -1738,8 +1736,9 @@ pets:AddButton("Quick Evolve (10x)", function()
     end
 end)
 
-pets:AddLabel("Trade System")
+pets:AddLabel("")
 pets:AddLabel("----------------------------")
+pets:AddLabel("Trade System")
 
 local selectedTarget = nil
 local selectedPet = nil
