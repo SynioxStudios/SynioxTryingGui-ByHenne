@@ -1162,15 +1162,44 @@ showKillsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 
 local GymTab = Window:CreateTab("Gym")
 
--- Sadece Label kısmında emoji var
 GymTab:AddLabel("🌴 Jungle Gym")
 
 local selectedMachine = ""
+
+-- Her Makine İçin Ayrı Fonksiyonlar
+local function lift_JungleLift()
+    while getgenv().working and selectedMachine == "Jungle Lift" do
+        LocalPlayer.muscleEvent:FireServer("rep")
+        task.wait(0.1)
+    end
+end
+
+local function lift_JungleBoulder()
+    while getgenv().working and selectedMachine == "Jungle Boulder" do
+        LocalPlayer.muscleEvent:FireServer("rep")
+        task.wait(0.1)
+    end
+end
+
+local function lift_JungleSquat()
+    while getgenv().working and selectedMachine == "Jungle Squat" do
+        LocalPlayer.muscleEvent:FireServer("rep")
+        task.wait(0.1)
+    end
+end
+
+local function lift_JunglePullUps()
+    while getgenv().working and selectedMachine == "Jungle Pull Ups" do
+        LocalPlayer.muscleEvent:FireServer("rep")
+        task.wait(0.1)
+    end
+end
+
 local machinePositions = {
-    ["Jungle Lift"] = CFrame.new(-8666, 34, 2070),
-    ["Jungle Boulder"] = CFrame.new(-8614, 51, 2677),
-    ["Jungle Squat"] = CFrame.new(-8377, 48, 2864),
-    ["Jungle Pull Ups"] = CFrame.new(-8173, 83, 1907)
+    ["Jungle Lift"] = {pos = CFrame.new(-8666, 34, 2070), func = lift_JungleLift},
+    ["Jungle Boulder"] = {pos = CFrame.new(-8614, 51, 2677), func = lift_JungleBoulder},
+    ["Jungle Squat"] = {pos = CFrame.new(-8377, 48, 2864), func = lift_JungleSquat},
+    ["Jungle Pull Ups"] = {pos = CFrame.new(-8173, 83, 1907), func = lift_JunglePullUps}
 }
 
 GymTab:AddDropdown("Select Machine", {"Jungle Lift", "Jungle Boulder", "Jungle Squat", "Jungle Pull Ups"}, function(v)
@@ -1180,12 +1209,13 @@ end)
 GymTab:AddSwitch("Auto Farm", function(bool)
     getgenv().working = bool
     if bool and selectedMachine ~= "" then
+        local data = machinePositions[selectedMachine]
         local character = LocalPlayer.Character
         if character and character:FindFirstChild("HumanoidRootPart") then
-            character.HumanoidRootPart.CFrame = machinePositions[selectedMachine]
+            character.HumanoidRootPart.CFrame = data.pos
             task.wait(0.2)
             pressEKey()
-            task.spawn(autoLift)
+            task.spawn(data.func)
         end
     else
         getgenv().working = false
