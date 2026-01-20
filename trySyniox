@@ -1169,42 +1169,34 @@ local function pressEKey()
     VIM:SendKeyEvent(false, Enum.KeyCode.E, false, game)
 end
 
-local selectedFarm = "None"
-local autoFarmEnabled = false
-local farmData = {
-    ["Bench Press"] = {cf = CFrame.new(-8173, 64, 1898), event = "rep"},
-    ["Squat"] = {cf = CFrame.new(-8352, 34, 2878), event = "rep"},
-    ["Boulder"] = {cf = CFrame.new(-8621, 34, 2684), event = "rep"},
-    ["Jungle Lift"] = {cf = CFrame.new(-8642.396, 6.798, 2086.103), event = "rep"}
-}
-
-GymTab:CreateDropdown("Select Jungle Exercise", {"None", "Bench Press", "Squat", "Boulder", "Jungle Lift"}, function(val)
-    selectedFarm = val
-end)
-
-GymTab:CreateSwitch("Auto Farm", function(bool)
-    autoFarmEnabled = bool
-end)
-
-task.spawn(function()
-    while true do
-        if autoFarmEnabled and selectedFarm ~= "None" then
-            local data = farmData[selectedFarm]
-            local char = game.Players.LocalPlayer.Character
-            local root = char and char:FindFirstChild("HumanoidRootPart")
-            
-            if root and data then
-                if (root.Position - data.cf.p).Magnitude > 5 then
-                    root.CFrame = data.cf
-                    task.wait(0.3)
-                    pressEKey()
+local function startJungleFarm(toggleName, cframeValue, eventName)
+    local active = false
+    GymTab:CreateSwitch(toggleName, function(bool)
+        active = bool
+        if bool then
+            task.spawn(function()
+                while active do
+                    local char = game.Players.LocalPlayer.Character
+                    local root = char and char:FindFirstChild("HumanoidRootPart")
+                    if root then
+                        if (root.Position - cframeValue.p).Magnitude > 5 then
+                            root.CFrame = cframeValue
+                            task.wait(0.3)
+                            pressEKey()
+                        end
+                        game:GetService("Players").LocalPlayer.muscleEvent:FireServer(eventName)
+                    end
+                    task.wait(0.05)
                 end
-                game:GetService("Players").LocalPlayer.muscleEvent:FireServer(data.event)
-            end
+            end)
         end
-        task.wait(0.05)
-    end
-end)
+    end)
+end
+
+startJungleFarm("Auto Bench Press", CFrame.new(-8173, 64, 1898), "rep")
+startJungleFarm("Auto Squat", CFrame.new(-8352, 34, 2878), "rep")
+startJungleFarm("Auto Boulder", CFrame.new(-8621, 34, 2684), "rep")
+startJungleFarm("Auto Jungle Lift", CFrame.new(-8642.396, 6.798, 2086.103), "rep")
 
 local LookDura = window:AddTab("Stats")
 local SelectPlayerName = ""
