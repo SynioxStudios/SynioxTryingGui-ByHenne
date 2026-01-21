@@ -1870,8 +1870,8 @@ local running = false
 local selectedTarget = nil
 local selectedPet = nil
 
-pets:AddLabel("Trade System")
 pets:AddLabel("----------------------------")
+pets:AddLabel("💎 Trade System")
 
 local playerDropdown = pets:AddDropdown("Choose Player", function(name)
     local username = name:match(" | (.+)") or name
@@ -1921,9 +1921,8 @@ pets:AddSwitch("Auto Trade", function(state)
                 local uniqueFolder = localPlayer:FindFirstChild("petsFolder") and localPlayer.petsFolder:FindFirstChild("Unique")
 
                 if uniqueFolder then
-                    -- Trade İsteği
                     tradingEvent:FireServer("sendTradeRequest", selectedTarget)
-                    task.wait(0.3) 
+                    task.wait(1.5) 
 
                     local offered = 0
                     local petsToOffer = uniqueFolder:GetChildren()
@@ -1933,11 +1932,9 @@ pets:AddSwitch("Auto Trade", function(state)
                         if not running then break end
 
                         if pet.Name == selectedPet then
-                            -- Peti Koy (Unique klasöründeki objeyi gönderir)
                             tradingEvent:FireServer("offerItem", pet)
                             offered = offered + 1
-                            -- Saniyenin 10'da 1'i hızında bekleme
-                            task.wait(0.1) 
+                            task.wait(0.5) 
 
                             if offered >= 6 then
                                 break
@@ -1945,15 +1942,14 @@ pets:AddSwitch("Auto Trade", function(state)
                         end
                     end
 
-                    task.wait(0.2) 
+                    task.wait(1.2) 
 
                     if running then
-                        -- Takası Kabul Et
                         tradingEvent:FireServer("acceptTrade")
                     end
                 end
             end
-            task.wait(1.5) 
+            task.wait(2.5) 
         end
     end)
 end)
