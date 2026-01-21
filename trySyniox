@@ -1943,27 +1943,21 @@ Misc:AddButton("🚀 FPS Booster", function()
         Terrain.WaterWaveSize = 0
         Terrain.WaterWaveSpeed = 0
         Terrain.WaterReflectance = 0
-        Terrain.WaterTransparency = 0
     end
     
     settings().Rendering.QualityLevel = 1
     
     for _, v in pairs(game:GetDescendants()) do
-        if v:IsA("Part") or v:IsA("MeshPart") or v:IsA("UnionOperation") then
-            v.Material = Enum.Material.SmoothPlastic
-            v.Reflectance = 0
-        elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+        if v:IsA("ParticleEmitter") or v:IsA("Trail") then
             v.Enabled = false
-        elseif v:IsA("PostProcessEffect") then
+        elseif v:IsA("BlurEffect") or v:IsA("SunRaysEffect") then
             v.Enabled = false
-        elseif v:IsA("Decal") then
-            v.Transparency = 1
         end
     end
 
     game:GetService("StarterGui"):SetCore("SendNotification", {
         Title = "Syniox Hub",
-        Text = "FPS Boosted!",
+        Text = "FPS Boosted! (Particles & Trails Cleaned)",
         Duration = 3
     })
 end)
