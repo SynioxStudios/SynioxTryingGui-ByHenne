@@ -2144,14 +2144,12 @@ scriptFolder:AddButton("⚡ Infinite Yield", function()
     })
 end)
 
-scriptFolder:AddButton("🕺 FE Emotes (All)", function()
-    -- Scripti yüklüyoruz
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/FocusedSinc/EmoteChat/main/Main.lua"))()
+scriptFolder:AddButton("🕺 Emote Script", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/7yd7/Hub/refs/heads/Branch/GUIS/Emotes.lua"))()
     
-    -- Syniox Hub V2 Bildirimi (Okunabilir olması için alt satıra geçtim)
     game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Syniox Hub",
-        Text = "Emotes Yüklendi! Menüyü açmak için chate . (nokta) yazın!",
+        Title = "Syniox Hub V2",
+        Text = "Emote Script Activated!",
         Duration = 5
     })
 end)
