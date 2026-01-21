@@ -2144,16 +2144,6 @@ scriptFolder:AddButton("⚡ Infinite Yield", function()
     })
 end)
 
-scriptFolder:AddButton("👻 Ghost Hub", function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/GhostPlayer352/Test4/main/GhostHub'))()
-    
-    game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Syniox Hub",
-        Text = "Ghost Hub Loaded!",
-        Duration = 3
-    })
-end)
-
 Misc:AddSwitch("🌊 Full Walk on Water", function(bool)
     if bool then
         createParts()
