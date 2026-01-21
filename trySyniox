@@ -1873,7 +1873,6 @@ local selectedPet = nil
 pets:AddLabel("Trade System")
 pets:AddLabel("----------------------------")
 
--- Oyuncu Seçimi (Çıkanlar silinmez, yeniler sona eklenir)
 local playerDropdown = pets:AddDropdown("Choose Player", function(name)
     local username = name:match(" | (.+)") or name
     selectedTarget = game:GetService("Players"):FindFirstChild(username)
@@ -1891,9 +1890,6 @@ end
 
 game:GetService("Players").PlayerAdded:Connect(updatePlayerList)
 
-pets:AddLabel("") 
-
--- Pet Seçimi
 local petDropdown = pets:AddDropdown("Choose Pet", function(text) 
     selectedPet = text 
 end)
@@ -1913,9 +1909,6 @@ for _, name in ipairs(petList) do
     petDropdown:Add(name) 
 end
 
-pets:AddLabel("")
-
--- Auto Trade Başlatıcı
 pets:AddSwitch("Auto Trade", function(state)
     running = state
     if not state then return end
@@ -1924,15 +1917,12 @@ pets:AddSwitch("Auto Trade", function(state)
         while running do
             if selectedTarget and selectedPet then
                 local tradingEvent = game:GetService("ReplicatedStorage").rEvents.tradingEvent
-                -- Senin kodundaki klasör yolu:
-                local uniqueFolder = game:GetService("Players").LocalPlayer:FindFirstChild("petsFolder") and game:GetService("Players").LocalPlayer.petsFolder:FindFirstChild("Unique")
+                local localPlayer = game:GetService("Players").LocalPlayer
+                local uniqueFolder = localPlayer:FindFirstChild("petsFolder") and localPlayer.petsFolder:FindFirstChild("Unique")
 
                 if uniqueFolder then
-                    -- Trade İsteği At
                     tradingEvent:FireServer("sendTradeRequest", selectedTarget)
-                    
-                    -- Pencerenin açılması için makul bir bekleme
-                    task.wait(1.5)
+                    task.wait(0.2) 
 
                     local offered = 0
                     local petsToOffer = uniqueFolder:GetChildren()
@@ -1942,36 +1932,29 @@ pets:AddSwitch("Auto Trade", function(state)
                         if not running then break end
 
                         if pet.Name == selectedPet then
-                            -- Senin verdiğin offerItem eventi
                             tradingEvent:FireServer("offerItem", pet)
                             offered = offered + 1
-                            
-                            -- Eventler arasına senin istediğin o "düzeltilmiş" mesafeyi koydum
-                            task.wait(0.4) 
+                            task.wait(0.01) 
 
-                            if offered >= 6 then -- Maksimum 6 pet koyar
+                            if offered >= 6 then
                                 break
                             end
                         end
                     end
 
-                    -- Onaylamadan önce kısa bir es ver
-                    task.wait(0.8)
+                    task.wait(0.05) 
 
                     if running then
-                        -- Senin verdiğin acceptTrade eventi
                         tradingEvent:FireServer("acceptTrade")
                     end
                 end
             end
-            -- Her trade döngüsü arası mola
-            task.wait(2.5)
+            task.wait(1) 
         end
     end)
 end)
 
 pets:AddLabel("----------------------------")
-pets:AddLabel("Discord: https://discord.gg/FsG2cGay")
 
 local GymTab = window:AddTab("Gym")
 
