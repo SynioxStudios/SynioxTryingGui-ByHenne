@@ -23,7 +23,7 @@ local AutoFarm = window:AddTab("Farm")
 AutoFarm:AddLabel("Op Farm")
 
 _G.repToggle = false
-AutoFarm:AddSwitch("Auto Farm (Equip Any tool)", function(state)
+AutoFarm:AddSwitch("💪 Auto Farm (Equip Any tool)", function(state)
     _G.repToggle = state
     task.spawn(function()
         while _G.repToggle do
@@ -2147,7 +2147,7 @@ task.spawn(function()
     end
 end)
 
-Misc:AddSwitch("Auto Eat All (No Egg)", function(state)
+Misc:AddSwitch("🍴 Auto Eat All (No Egg)", function(state)
     autoEatBoostsEnabled = state
 end)
 
