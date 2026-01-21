@@ -2146,6 +2146,7 @@ end)
 
 scriptFolder:AddButton("🎥 FreeCam", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Skyhub-Test/main/Freecam.lua"))()
+
     game:GetService("StarterGui"):SetCore("SendNotification", {
         Title = "Syniox Hub",
         Text = "FreeCam Loaded!",
