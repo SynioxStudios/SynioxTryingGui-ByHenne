@@ -1963,10 +1963,6 @@ pets:AddSwitch("Auto Trade", function(state)
     end)
 end)
 
-pets:AddLabel("----------------------------")
-pets:AddLabel("YouTube Tanıtımı: Script kanalımızda!")
-pets:AddLabel("Discord: https://discord.gg/FsG2cGay")
-
 local GymTab = window:AddTab("Gym")
 
 local VIM = game:GetService("VirtualInputManager")
@@ -2560,15 +2556,14 @@ end)
 
 local credits = window:AddTab("Credits")
 
--- Ana Bilgiler
 credits:AddLabel("✨ Syniox Hub V2")
 credits:AddLabel("👤 Developer: Yusuf")
-
---Credits
 credits:AddLabel("--------------------------")
 credits:AddLabel("🤝 Special Thanks to: Halis & Henne")
 credits:AddLabel("❤️ Thanks for the support!")
-
--- End
 credits:AddLabel("--------------------------")
 credits:AddLabel("🙏 Thank you for using Syniox Hub!")
+credits:AddLabel("👇 My Discord Server Link Here")
+credits:AddButton("Discord Link", function()
+    setclipboard("https://discord.gg/DbAU5Z6HPd")
+end)
