@@ -2144,7 +2144,7 @@ scriptFolder:AddButton("⚡ Infinite Yield", function()
     })
 end)
 
-scriptFolder:AddButton("🎥 FreeCam", function()
+scriptFolder:AddButton("🎥 FreeCam New", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Skyhub-Test/main/Freecam.lua"))()
 
     game:GetService("StarterGui"):SetCore("SendNotification", {
