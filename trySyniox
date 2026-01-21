@@ -2132,6 +2132,28 @@ timeDropdown:Add("Night")
 timeDropdown:Add("Day")
 timeDropdown:Add("Midnight")
 
+local scriptFolder = Misc:AddFolder("📜 External Scripts")
+
+scriptFolder:AddButton("⚡ Infinite Yield", function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+    
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "Syniox Hub",
+        Text = "Infinite Yield Loaded!",
+        Duration = 3
+    })
+end)
+
+scriptFolder:AddButton("👻 Ghost Hub", function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/GhostPlayer352/Test4/main/GhostHub'))()
+    
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "Syniox Hub",
+        Text = "Ghost Hub Loaded!",
+        Duration = 3
+    })
+end)
+
 Misc:AddSwitch("🌊 Full Walk on Water", function(bool)
     if bool then
         createParts()
