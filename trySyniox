@@ -1640,7 +1640,7 @@ end)
 local pets = window:AddTab("Pets")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local selectedPet = ""
+local selectedPet = "Neon Guardian"
 local petDropdown = pets:AddDropdown("Select Pet", function(text)
     selectedPet = text
 end)
@@ -1697,7 +1697,7 @@ pets:AddSwitch("Auto Open Pet", function(bool)
     end
 end)
 
-local selectedAura = ""
+local selectedAura = "Blue Aura"
 local auraDropdown = pets:AddDropdown("Select Aura", function(text)
     selectedAura = text
 end)
@@ -1801,7 +1801,7 @@ evolvePetDropdown:Add("Muscle King (Unique)")
 evolvePetDropdown:Add("Entropic Blast (Unique)")
 evolvePetDropdown:Add("Eternal Megastrike (Unique)")
 
-Pets:AddSwitch("🎯 Auto Evolve Selected Pet", function(state)
+pets:AddSwitch("🎯 Auto Evolve Selected Pet", function(state)
     autoEvolvePet = state
     if state then
         if selectedEvolvePet == "" then
@@ -1831,7 +1831,7 @@ Pets:AddSwitch("🎯 Auto Evolve Selected Pet", function(state)
     end
 end)
 
-Pets:AddButton("⚡ Quick Evolve (1x)", function()
+pets:AddButton("⚡ Quick Evolve (1x)", function()
     if selectedEvolvePet == "" then
         return
     end
@@ -1847,7 +1847,7 @@ Pets:AddButton("⚡ Quick Evolve (1x)", function()
     end)
 end)
 
-Pets:AddButton("💥 Quick Evolve (10x)", function()
+pets:AddButton("💥 Quick Evolve (10x)", function()
     if selectedEvolvePet == "" then
         return
     end
@@ -1907,27 +1907,27 @@ local JungleFolder = GymTab:AddFolder("Jungle Gym")
 createFarm(JungleFolder, "🏋️ Auto Jungle Lift", CFrame.new(-8652.85, 45.22, 2088.99), "rep")
 createFarm(JungleFolder, "💪 Auto Bench Press", CFrame.new(-8173.23, 83.82, 1907.40), "rep")
 createFarm(JungleFolder, "🦵 Auto Squat", CFrame.new(-8377.55, 48.71, 2864.90), "rep")
-createFarm(JungleFolder, "🗿 Auto Boulder", CFrame.new(-8614.81, 51.90, 2677.37), "rep")
+createFarm(JungleFolder, "Auto Boulder", CFrame.new(-8614.81, 51.90, 2677.37), "rep")
 
 -- 2. MUSCLE KING
 local MuscleKingFolder = GymTab:AddFolder("Muscle King")
 createFarm(MuscleKingFolder, "🏋️ Auto Lift", CFrame.new(-8774.03, 52.15, -5664.10), "rep")
 createFarm(MuscleKingFolder, "💪 Auto Bench Press", CFrame.new(-8589.43, 58.00, -6044.57), "rep")
 createFarm(MuscleKingFolder, "🦵 Auto Squat", CFrame.new(-8759.62, 46.50, -6041.16), "rep")
-createFarm(MuscleKingFolder, "🗿 Auto Boulder", CFrame.new(-8942.97, 60.71, -5692.74), "rep")
+createFarm(MuscleKingFolder, "Auto Boulder", CFrame.new(-8942.97, 60.71, -5692.74), "rep")
 
 -- 3. LEGENDS GYM
 local LegendsFolder = GymTab:AddFolder("Legends Gym")
 createFarm(LegendsFolder, "🏋️ Auto Lift", CFrame.new(4532.02, 1025.80, -4002.15), "rep")
 createFarm(LegendsFolder, "💪 Auto Bench Press", CFrame.new(4109.20, 1035.67, -3802.88), "rep")
 createFarm(LegendsFolder, "🦵 Auto Squat", CFrame.new(4438.74, 1021.38, -4058.46), "rep")
-createFarm(LegendsFolder, "🗿 Auto Boulder", CFrame.new(4188.75, 1019.85, -3905.19), "rep")
+createFarm(LegendsFolder, "Auto Boulder", CFrame.new(4188.75, 1019.85, -3905.19), "rep")
 
 -- 4. MYTHICAL GYM
 local MythicalFolder = GymTab:AddFolder("Mythical Gym")
 createFarm(MythicalFolder, "🏋️ Auto Lift", CFrame.new(2486.75, 31.91, 847.89), "rep")
 createFarm(MythicalFolder, "💪 Auto Bench Press", CFrame.new(2370.74, 57.09, 1243.37), "rep")
-createFarm(MythicalFolder, "🗿 Auto Boulder", CFrame.new(2667.31, 58.88, 1202.46), "rep")
+createFarm(MythicalFolder, "Auto Boulder", CFrame.new(2667.31, 58.88, 1202.46), "rep")
 
 -- 5. FROST GYM
 local FrostFolder = GymTab:AddFolder("Frost Gym")
