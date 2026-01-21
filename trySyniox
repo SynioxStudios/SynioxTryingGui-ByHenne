@@ -187,7 +187,6 @@ startJungleFarm("Auto Squat", CFrame.new(-8352, 34, 2878), "rep")
 -- 4. Auto Boulder (Kaya)
 startJungleFarm("Auto Boulder", CFrame.new(-8621, 34, 2684), "rep")
 
-
 local rebirths = window:AddTab("Rebirths")
 
 rebirths:AddTextBox("Rebirth Target", function(text)
