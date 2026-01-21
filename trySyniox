@@ -135,7 +135,7 @@ for _, loc in ipairs(Locations) do
 end
 
 -- JUNGLE GYM BÖLMESİ
-local FarmFolder = AutoFarm:AddFolder("Jungle Gym")
+local JungleFolder = AutoFarm:AddFolder("Jungle Gym")
 
 -- E Tuşu Fonksiyonu (Genel Kullanım)
 local VIM = game:GetService("VirtualInputManager")
