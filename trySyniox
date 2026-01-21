@@ -2144,13 +2144,13 @@ scriptFolder:AddButton("⚡ Infinite Yield", function()
     })
 end)
 
-scriptFolder:AddButton("🎥 FreeCam New", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Skyhub-Test/main/Freecam.lua"))()
+scriptFolder:AddButton("🕺 FE Emotes (All)", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/FocusedSinc/EmoteChat/main/Main.lua"))()
 
     game:GetService("StarterGui"):SetCore("SendNotification", {
         Title = "Syniox Hub",
-        Text = "FreeCam Loaded!",
-        Duration = 3
+        Text = "Emotes Loaded! Press '.' or check chat.",
+        Duration = 5
     })
 end)
 
