@@ -1870,12 +1870,9 @@ end)
 local running = false
 local selectedTarget = nil
 local selectedPet = nil
-local targetAmount = 0
-local totalSent = 0
 
-pets:AddLabel("Trade System")
 pets:AddLabel("----------------------------")
-
+pets:AddLabel("💎 Trade System")
 local playerDropdown = pets:AddDropdown("Choose Player", function(name)
     local username = name:match(" | (.+)") or name
     selectedTarget = game:GetService("Players"):FindFirstChild(username)
@@ -1912,69 +1909,58 @@ for _, name in ipairs(petList) do
     petDropdown:Add(name) 
 end
 
-local counterLabel = pets:AddLabel("Status: Waiting...")
-
-pets:AddTextBox("Amount (Empty = Infinite)", function(text)
-    targetAmount = tonumber(text) or 0
-    counterLabel:SetText(targetAmount > 0 and "Remaining: " .. targetAmount or "Mode: Infinite")
-end)
-
-pets:AddSwitch("Auto Trade", function(state)
+pets:AddSwitch("🔃 Auto Trade", function(state)
     running = state
-    totalSent = 0
-    if not state then counterLabel:SetText("Status: Stopped") return end
+    if not state then return end
 
     task.spawn(function()
         while running do
-            if targetAmount > 0 and totalSent >= targetAmount then 
-                counterLabel:SetText("Status: Completed!")
-                running = false break 
-            end
-
             if selectedTarget and selectedPet then
                 local tradingEvent = game:GetService("ReplicatedStorage").rEvents.tradingEvent
-                local pf = game:GetService("Players").LocalPlayer:FindFirstChild("petsFolder")
+                local localPlayer = game:GetService("Players").LocalPlayer
+                local pf = localPlayer:FindFirstChild("petsFolder")
 
                 if pf then
-                    local folders = {pf:FindFirstChild("Basic"), pf:FindFirstChild("Advanced"), pf:FindFirstChild("Rare"), pf:FindFirstChild("Epic"), pf:FindFirstChild("Unique")}
-                    
+                    local folders = {
+                        pf:FindFirstChild("Basic"),
+                        pf:FindFirstChild("Advanced"),
+                        pf:FindFirstChild("Rare"),
+                        pf:FindFirstChild("Epic"),
+                        pf:FindFirstChild("Unique")
+                    }
+
                     tradingEvent:FireServer("sendTradeRequest", selectedTarget)
-                    task.wait(0.8) 
+                    task.wait(1.5) 
 
                     local offered = 0
+                    
                     for _, folder in ipairs(folders) do
                         if folder and running and offered < 6 then
-                            for _, pet in ipairs(folder:GetChildren()) do
-                                if not running or offered >= 6 or (targetAmount > 0 and (totalSent + offered) >= targetAmount) then break end
+                            local petsToOffer = folder:GetChildren()
+                            for i = 1, #petsToOffer do
+                                local pet = petsToOffer[i]
+                                if not running or offered >= 6 then break end
+
                                 if pet.Name == selectedPet then
                                     tradingEvent:FireServer("offerItem", pet)
                                     offered = offered + 1
-                                    task.wait(0.1) 
+                                    task.wait(0.5) 
                                 end
                             end
                         end
                     end
 
-                    if offered > 0 then
-                        task.wait(0.4)
-                        if running then
-                            tradingEvent:FireServer("acceptTrade")
-                            totalSent = totalSent + offered
-                            counterLabel:SetText(targetAmount > 0 and "Remaining: " .. (targetAmount - totalSent) or "Sent Total: " .. totalSent)
-                        end
-                    else
-                        if targetAmount > 0 then running = false break end
+                    task.wait(1.2) 
+
+                    if running then
+                        tradingEvent:FireServer("acceptTrade")
                     end
                 end
             end
-            task.wait(1.2) 
+            task.wait(2.5) 
         end
     end)
 end)
-
-pets:AddLabel("----------------------------")
-pets:AddLabel("YouTube Tanıtımı: Script kanalımızda!")
-pets:AddLabel("Discord: https://discord.gg/FsG2cGay")
 
 local GymTab = window:AddTab("Gym")
 
