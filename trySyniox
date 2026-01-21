@@ -1638,6 +1638,7 @@ Rock:AddSwitch("🌳 Jungle Rock 10M", function(Value)
 end)
 
 local pets = window:AddTab("Pets")
+pets:AddLabel("💰 Auto Buy")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local selectedPet = "Neon Guardian"
