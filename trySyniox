@@ -134,6 +134,60 @@ for _, loc in ipairs(Locations) do
     end)
 end
 
+-- JUNGLE GYM BÖLMESİ
+local FarmFolder = AutoFarm:AddFolder("Jungle Gym")
+
+-- E Tuşu Fonksiyonu (Genel Kullanım)
+local VIM = game:GetService("VirtualInputManager")
+local function pressEKey()
+    VIM:SendKeyEvent(true, Enum.KeyCode.E, false, game)
+    task.wait(0.05)
+    VIM:SendKeyEvent(false, Enum.KeyCode.E, false, game)
+end
+
+-- Genel Farm Fonksiyonu
+local function startJungleFarm(toggleName, cframeValue, eventName)
+    local active = false
+    jungleFolder:AddSwitch(toggleName, function(bool)
+        active = bool
+        if bool then
+            task.spawn(function()
+                while active do
+                    local char = game.Players.LocalPlayer.Character
+                    local root = char and char:FindFirstChild("HumanoidRootPart")
+                    
+                    if root then
+                        -- Işınlanma ve Sabitleme
+                        if (root.Position - cframeValue.p).Magnitude > 5 then
+                            root.CFrame = cframeValue
+                            task.wait(0.3)
+                            pressEKey()
+                        end
+                        
+                        game:GetService("Players").LocalPlayer.muscleEvent:FireServer(eventName)
+                    end
+                    task.wait(0.05)
+                end
+            end)
+        end
+    end)
+end
+
+--- --- BÖLÜMLER --- ---
+
+-- 1. Auto Jungle Lift
+startJungleFarm("Auto Jungle Lift", CFrame.new(-8642.396, 6.798, 2086.103), "rep")
+
+-- 2. Auto Bench Press
+startJungleFarm("Auto Bench Press", CFrame.new(-8173, 64, 1898), "rep")
+
+-- 3. Auto Squat
+startJungleFarm("Auto Squat", CFrame.new(-8352, 34, 2878), "rep")
+
+-- 4. Auto Boulder (Kaya)
+startJungleFarm("Auto Boulder", CFrame.new(-8621, 34, 2684), "rep")
+
+
 local rebirths = window:AddTab("Rebirths")
 
 rebirths:AddTextBox("Rebirth Target", function(text)
