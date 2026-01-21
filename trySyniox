@@ -1921,8 +1921,9 @@ pets:AddSwitch("Auto Trade", function(state)
                 local uniqueFolder = localPlayer:FindFirstChild("petsFolder") and localPlayer.petsFolder:FindFirstChild("Unique")
 
                 if uniqueFolder then
+                    -- Trade İsteği
                     tradingEvent:FireServer("sendTradeRequest", selectedTarget)
-                    task.wait(0.2) 
+                    task.wait(0.3) 
 
                     local offered = 0
                     local petsToOffer = uniqueFolder:GetChildren()
@@ -1932,9 +1933,11 @@ pets:AddSwitch("Auto Trade", function(state)
                         if not running then break end
 
                         if pet.Name == selectedPet then
+                            -- Peti Koy (Unique klasöründeki objeyi gönderir)
                             tradingEvent:FireServer("offerItem", pet)
                             offered = offered + 1
-                            task.wait(0.01) 
+                            -- Saniyenin 10'da 1'i hızında bekleme
+                            task.wait(0.1) 
 
                             if offered >= 6 then
                                 break
@@ -1942,19 +1945,18 @@ pets:AddSwitch("Auto Trade", function(state)
                         end
                     end
 
-                    task.wait(0.05) 
+                    task.wait(0.2) 
 
                     if running then
+                        -- Takası Kabul Et
                         tradingEvent:FireServer("acceptTrade")
                     end
                 end
             end
-            task.wait(1) 
+            task.wait(1.5) 
         end
     end)
 end)
-
-pets:AddLabel("----------------------------")
 
 local GymTab = window:AddTab("Gym")
 
