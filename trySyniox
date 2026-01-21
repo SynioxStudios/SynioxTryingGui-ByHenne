@@ -1867,12 +1867,7 @@ pets:AddButton("💥 Quick Evolve (10x)", function()
     end
 end)
 
-local running = false
-local selectedTarget = nil
-local selectedPet = nil
-
-pets:AddLabel("----------------------------")
-pets:AddLabel("💎 Trade System")
+local pets = window:AddTab("Trade System")
 
 local running = false
 local selectedTarget = nil
@@ -1903,14 +1898,14 @@ local petDropdown = pets:AddDropdown("Choose Pet", function(text)
 end)
 
 local petList = {
-    "Blue Birdie (Basic)", "Orange Hedgehog (Basic)", "Red Kitty (Basic)", "Blue Bunny (Basic)", "Silver Dog (Basic)",
-    "Dark Vampy (Advanced)", "Dark Golem (Advanced)", "Green Butterfly (Advanced)", "Yellow Butterfly (Advanced)",
-    "Crimson Falcon (Rare)", "Purple Dragon (Rare)", "Orange Pegasus (Rare)", "Purple Falcon (Rare)", "Red Dragon (Rare)",
-    "White Pegasus (Rare)", "Frostwave Legends Penguin (Rare)", "Phantom Genesis Dragon (Rare)", "Eternal Strike Leviathan (Rare)",
-    "Blue Pheonix (Epic)", "Blue Firecaster (Epic)", "Golden Pheonix (Epic)", "Red Firecaster (Epic)", "Green Firecaster (Epic)",
-    "White Pheonix (Epic)", "Dark Legends Manticore (Epic)", "Ultimate Supernova Pegasus (Epic)", "Lightning Strike Phantom (Epic)", "Golden Viking (Epic)",
-    "Infernal Dragon (Unique)", "Ultra Birdie (Unique)", "Magic Butterfly (Unique)", "Aether Spirit Bunny (Unique)",
-    "Cybernetic Showdown Dragon (Unique)", "Darkstar Hunter (Unique)", "Muscle Sensei (Unique)", "Neon Guardian (Unique)"
+    "Blue Birdie", "Orange Hedgehog", "Red Kitty", "Blue Bunny", "Silver Dog",
+    "Dark Vampy", "Dark Golem", "Green Butterfly", "Yellow Butterfly",
+    "Crimson Falcon", "Purple Dragon", "Orange Pegasus", "Purple Falcon", "Red Dragon",
+    "White Pegasus", "Frostwave Legends Penguin", "Phantom Genesis Dragon", "Eternal Strike Leviathan",
+    "Blue Pheonix", "Blue Firecaster", "Golden Pheonix", "Red Firecaster", "Green Firecaster",
+    "White Pheonix", "Dark Legends Manticore", "Ultimate Supernova Pegasus", "Lightning Strike Phantom", "Golden Viking",
+    "Infernal Dragon", "Ultra Birdie", "Magic Butterfly", "Aether Spirit Bunny",
+    "Cybernetic Showdown Dragon", "Darkstar Hunter", "Muscle Sensei", "Neon Guardian"
 }
 
 for _, name in ipairs(petList) do 
@@ -1926,26 +1921,34 @@ pets:AddSwitch("Auto Trade", function(state)
             if selectedTarget and selectedPet then
                 local tradingEvent = game:GetService("ReplicatedStorage").rEvents.tradingEvent
                 local localPlayer = game:GetService("Players").LocalPlayer
-                local uniqueFolder = localPlayer:FindFirstChild("petsFolder") and localPlayer.petsFolder:FindFirstChild("Unique")
+                local pf = localPlayer:FindFirstChild("petsFolder")
 
-                if uniqueFolder then
+                if pf then
+                    local folders = {
+                        pf:FindFirstChild("Basic"),
+                        pf:FindFirstChild("Advanced"),
+                        pf:FindFirstChild("Rare"),
+                        pf:FindFirstChild("Epic"),
+                        pf:FindFirstChild("Unique")
+                    }
+
                     tradingEvent:FireServer("sendTradeRequest", selectedTarget)
                     task.wait(1.5) 
 
                     local offered = 0
-                    local petsToOffer = uniqueFolder:GetChildren()
                     
-                    for i = 1, #petsToOffer do
-                        local pet = petsToOffer[i]
-                        if not running then break end
+                    for _, folder in ipairs(folders) do
+                        if folder and running and offered < 6 then
+                            local petsToOffer = folder:GetChildren()
+                            for i = 1, #petsToOffer do
+                                local pet = petsToOffer[i]
+                                if not running or offered >= 6 then break end
 
-                        if pet.Name == selectedPet then
-                            tradingEvent:FireServer("offerItem", pet)
-                            offered = offered + 1
-                            task.wait(0.5) 
-
-                            if offered >= 6 then
-                                break
+                                if pet.Name == selectedPet then
+                                    tradingEvent:FireServer("offerItem", pet)
+                                    offered = offered + 1
+                                    task.wait(0.5) 
+                                end
                             end
                         end
                     end
@@ -1963,7 +1966,8 @@ pets:AddSwitch("Auto Trade", function(state)
 end)
 
 pets:AddLabel("----------------------------")
-pets:AddLabel("YouTube Tanıtımı: Script kanalımızda")
+pets:AddLabel("YouTube Tanıtımı: Script kanalımızda!")
+pets:AddLabel("Discord: https://discord.gg/FsG2cGay")
 
 local GymTab = window:AddTab("Gym")
 
