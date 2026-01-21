@@ -2208,6 +2208,68 @@ Misc:AddSwitch("⬆️ Infinite Jump", function(state)
     end)
 end)
 
+Misc:AddButton("🔄 Rejoin Game", function()
+    local ScreenGui = Instance.new("ScreenGui")
+    local Frame = Instance.new("Frame")
+    local TextLabel = Instance.new("TextLabel")
+    local YesButton = Instance.new("TextButton")
+    local NoButton = Instance.new("TextButton")
+    local UICorner = Instance.new("UICorner")
+
+    ScreenGui.Parent = game:GetService("CoreGui")
+    ScreenGui.Name = "RejoinConfirm"
+
+    Frame.Name = "MainFrame"
+    Frame.Parent = ScreenGui
+    Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Frame.Position = UDim2.new(0.5, -125, 0.5, -75)
+    Frame.Size = UDim2.new(0, 250, 0, 150)
+    Frame.BorderSizePixel = 0
+    Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 10)
+
+    TextLabel.Parent = Frame
+    TextLabel.BackgroundTransparency = 1
+    TextLabel.Position = UDim2.new(0, 10, 0, 20)
+    TextLabel.Size = UDim2.new(0, 230, 0, 50)
+    TextLabel.Font = Enum.Font.GothamBold
+    TextLabel.Text = "Are you sure you want to rejoin?"
+    TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel.TextSize = 18
+    TextLabel.TextWrapped = true
+
+    YesButton.Name = "YesButton"
+    YesButton.Parent = Frame
+    YesButton.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+    YesButton.Position = UDim2.new(0, 20, 0, 90)
+    YesButton.Size = UDim2.new(0, 90, 0, 40)
+    YesButton.Font = Enum.Font.GothamBold
+    YesButton.Text = "YES"
+    YesButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    YesButton.TextSize = 16
+    Instance.new("UICorner", YesButton).CornerRadius = UDim.new(0, 6)
+
+    NoButton.Name = "NoButton"
+    NoButton.Parent = Frame
+    NoButton.BackgroundColor3 = Color3.fromRGB(231, 76, 60)
+    NoButton.Position = UDim2.new(0, 140, 0, 90)
+    NoButton.Size = UDim2.new(0, 90, 0, 40)
+    NoButton.Font = Enum.Font.GothamBold
+    NoButton.Text = "NO"
+    NoButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    NoButton.TextSize = 16
+    Instance.new("UICorner", NoButton).CornerRadius = UDim.new(0, 6)
+
+    YesButton.MouseButton1Click:Connect(function()
+        local ts = game:GetService("TeleportService")
+        local p = game.Players.LocalPlayer
+        ts:Teleport(game.PlaceId, p)
+    end)
+
+    NoButton.MouseButton1Click:Connect(function()
+        ScreenGui:Destroy()
+    end)
+end)
+
 Misc:AddSwitch("🧱 Anti Knockback", function(Value)
     if Value then
         local playerName = game.Players.LocalPlayer.Name
