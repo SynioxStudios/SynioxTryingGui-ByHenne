@@ -2630,14 +2630,40 @@ end)
 
 local credits = window:AddTab("Credits")
 
-credits:AddLabel("✨ Syniox Hub V2")
-credits:AddLabel("👤 Developer: Yusuf")
+local title = credits:AddLabel("✨ Syniox Hub V2")
+title.TextColor3 = Color3.fromRGB(255, 215, 0)
+
+local dev = credits:AddLabel("👤 Developer: Yusuf")
+dev.TextColor3 = Color3.fromRGB(255, 50, 50)
+
 credits:AddLabel("--------------------------")
-credits:AddLabel("🤝 Special Thanks to: Halis & Henne")
-credits:AddLabel("❤️ Thanks for the support!")
+
+local thanks = credits:AddLabel("🤝 Special Thanks to: Halis & Henne")
+thanks.TextColor3 = Color3.fromRGB(0, 255, 255)
+
+local support = credits:AddLabel("❤️ Thanks for the support!")
+support.TextColor3 = Color3.fromRGB(255, 105, 180)
+
 credits:AddLabel("--------------------------")
-credits:AddLabel("🙏 Thank you for using Syniox Hub!")
+
+local useMsg = credits:AddLabel("🙏 Thank you for using Syniox Hub!")
+useMsg.TextColor3 = Color3.fromRGB(255, 255, 255)
+
 credits:AddLabel("👇 My Discord Server Link Here")
+
 credits:AddButton("Discord Link", function()
-    setclipboard("https://discord.gg/DbAU5Z6HPd")
+    setclipboard("https://discord.gg/FsG2cGay")
 end)
+
+credits:AddLabel(" ")
+credits:AddLabel("==================================")
+
+local bigTitle = credits:AddLabel("🚀 SYNIOX HUB V2 🚀")
+bigTitle.TextColor3 = Color3.fromRGB(255, 255, 0)
+
+pcall(function()
+    bigTitle.TextSize = 25
+    bigTitle.Font = Enum.Font.GothamBold
+end)
+
+credits:AddLabel("==================================")
