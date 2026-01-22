@@ -267,11 +267,11 @@ end)
 
 local rebirths = window:AddTab("Rebirths")
 
-rebirths:AddTextBox("Rebirth Target", function(text)
+rebirths:AddTextBox("🔢 Rebirth Target", function(text)
     local newValue = tonumber(text)
     if newValue and newValue > 0 then
         targetRebirthValue = newValue
-        updateStats() -- Call the stats update function
+        updateStats() 
         
         game:GetService("StarterGui"):SetCore("SendNotification", {
             Title = "Objetivo Actualizado",
@@ -307,14 +307,14 @@ local targetSwitch = rebirths:AddSwitch("🔄 Auto Rebirth Target", function(boo
                     _G.targetRebirthActive = false
                     
                     game:GetService("StarterGui"):SetCore("SendNotification", {
-                        Title = "ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡Objetivo Alcanzado!",
-                        Text = "Has alcanzado " .. tostring(targetRebirthValue) .. " renacimientos",
+                        Title = "Goal Reached",
+                        Text = "You Have Reached" .. tostring(targetRebirthValue) .. " renacimientos",
                         Duration = 5
                     })
                     
                     break
-                end
-                
+						end
+						
                 game:GetService("ReplicatedStorage").rEvents.rebirthRemote:InvokeServer("rebirthRequest")
             end
         end)
@@ -376,7 +376,6 @@ local teleportSwitch = rebirths:AddSwitch("👑 Auto Teleport to Muscle King", f
     end
 end, "Tp to Mk")
 
--- Egg yeme
 local function eatProteinEgg()
     local backpack = player:WaitForChild("Backpack")
     local character = player.Character or player.CharacterAdded:Wait()
@@ -389,12 +388,11 @@ local function eatProteinEgg()
     end
 end
 
--- 30 Dakikalık Döngü
 task.spawn(function()
     while true do
         if autoEat30Enabled then
             eatProteinEgg()
-            task.wait(1800) -- 30 Dakika
+            task.wait(1800) 
         end
         task.wait(1)
     end
@@ -404,12 +402,11 @@ rebirths:AddSwitch("🥚 Auto Eat Egg 30 Min", function(state)
     autoEat30Enabled = state
 end)
 
--- 60 Dakikalık Döngü
 task.spawn(function()
     while true do
         if autoEat60Enabled then
             eatProteinEgg()
-            task.wait(3600) -- 60 Dakika
+            task.wait(3600) 
         end
         task.wait(1)
     end
@@ -757,7 +754,7 @@ Killer:AddSwitch("🛡️ Auto Whitelist Friends", function(state)
     end
 end)
 
-Killer:AddTextBox("Whitelist", function(text)
+Killer:AddTextBox("🫂 Whitelist", function(text)
     local target = Players:FindFirstChild(text)
     if target then
         playerWhitelist[target.Name] = true
@@ -807,7 +804,7 @@ Killer:AddSwitch("⚔️ Auto Kill", function(bool)
     end)
 end)
 
-local targetDropdown = Killer:AddDropdown("Select Target", function(name)
+local targetDropdown = Killer:AddDropdown("🎭 Select Target", function(name)
     if name and not table.find(targetPlayerNames, name) then
         table.insert(targetPlayerNames, name)
     end
@@ -889,7 +886,7 @@ Killer:AddSwitch("🎯 Start Kill Target", function(state)
     end)
 end)
 
-local spyTargetDropdown = Killer:AddDropdown("Select View Target", function(name)
+local spyTargetDropdown = Killer:AddDropdown("👁️ Select View Target", function(name)
     targetPlayerName = name
 end)
 
@@ -916,7 +913,7 @@ Players.PlayerRemoving:Connect(function(player)
     end
 end)
 
-Killer:AddSwitch("👁️ View Player", function(bool)
+Killer:AddSwitch("👀 View Player", function(bool)
     spying = bool
     if not spying then
         local cam = workspace.CurrentCamera
@@ -1011,6 +1008,8 @@ end)
 Killer:AddButton("⛔ Stop", function()
     StopFollow()
 end)
+
+Killer:AddLabel("===================================")
 
 local button = Killer:AddButton("🚫 Remove Punch Anim", function()
     local blockedAnimations = {
@@ -1715,7 +1714,7 @@ pets:AddLabel("💰 Auto Buy")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local selectedPet = "Neon Guardian"
-local petDropdown = pets:AddDropdown("Select Pet", function(text)
+local petDropdown = pets:AddDropdown("🐢 Select Pet", function(text)
     selectedPet = text
 end)
 
@@ -1772,7 +1771,7 @@ pets:AddSwitch("Auto Open Pet", function(bool)
 end)
 
 local selectedAura = "Blue Aura"
-local auraDropdown = pets:AddDropdown("Select Aura", function(text)
+local auraDropdown = pets:AddDropdown("💫 Select Aura", function(text)
     selectedAura = text
 end)
 
@@ -1823,7 +1822,7 @@ local pets = pets
 local selectedEvolvePet = ""
 local autoEvolvePet = false
 
-local evolvePetDropdown = pets:AddDropdown("Select Pet to Evolve", function(text)
+local evolvePetDropdown = pets:AddDropdown("🐾 Select Pet to Evolve", function(text)
     selectedEvolvePet = text
 end)
 
@@ -1946,7 +1945,7 @@ local selectedPet = nil
 
 pets:AddLabel("----------------------------")
 pets:AddLabel("💎 Trade System")
-local playerDropdown = pets:AddDropdown("Choose Player", function(name)
+local playerDropdown = pets:AddDropdown("👤 Choose Player", function(name)
     local username = name:match(" | (.+)") or name
     selectedTarget = game:GetService("Players"):FindFirstChild(username)
 end)
@@ -1963,7 +1962,7 @@ end
 
 game:GetService("Players").PlayerAdded:Connect(updatePlayerList)
 
-local petDropdown = pets:AddDropdown("Choose Pet", function(text) 
+local petDropdown = pets:AddDropdown("🐈 Choose Pet", function(text) 
     selectedPet = text 
 end)
 
