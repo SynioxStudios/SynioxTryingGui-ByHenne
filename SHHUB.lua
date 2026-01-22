@@ -946,16 +946,6 @@ local IsFollowing = false
 local Connection = nil
 local DistanceBehind = 3
 
-local function GetPlayerNames()
-    local names = {}
-    for _, p in pairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer then
-            table.insert(names, p.Name)
-        end
-    end
-    return names
-end
-
 local function StopFollow()
     IsFollowing = false
     if Connection then
@@ -984,8 +974,34 @@ local function StartFollow()
     end)
 end
 
-Killer:AddDropdown("👤 Select Player", GetPlayerNames(), function(Value)
-    SelectedTarget = Value
+local PlayerFollow = Killer:AddDropdown("👥 Select Target", function(name)
+    SelectedTarget = name
+end)
+
+for _, player in ipairs(Players:GetPlayers()) do
+    if player ~= LocalPlayer then
+        PlayerFollow:Add(player.Name)
+    end
+end
+
+Players.PlayerAdded:Connect(function(player)
+    if player ~= LocalPlayer then
+        PlayerFollow:Add(player.Name)
+    end
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+    if player ~= LocalPlayer then
+        if SelectedTarget == player.Name then
+            StopFollow()
+        end
+        PlayerFollow:Clear()
+        for _, plr in ipairs(Players:GetPlayers()) do
+            if plr ~= LocalPlayer then
+                PlayerFollow:Add(plr.Name)
+            end
+        end
+    end
 end)
 
 Killer:AddButton("✅ Start", function()
