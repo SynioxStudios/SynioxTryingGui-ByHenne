@@ -1948,7 +1948,7 @@ local selectedPet = nil
 local targetAmount = 0
 local totalSent = 0
 
-local playerDropdown = pets:AddDropdown("👤 Choose Player", function(name)
+local playerDropdown = pets:AddDropdown("Choose Player", function(name)
     local username = name:match(" | (.+)") or name
     selectedTarget = game:GetService("Players"):FindFirstChild(username)
 end)
@@ -1965,7 +1965,7 @@ end
 
 game:GetService("Players").PlayerAdded:Connect(updatePlayerList)
 
-local petDropdown = pets:AddDropdown("🐈 Choose Pet", function(text) 
+local petDropdown = pets:AddDropdown("Choose Pet", function(text) 
     selectedPet = text 
 end)
 
@@ -1986,30 +1986,37 @@ end
 
 local counterLabel = pets:AddLabel("Status: Waiting...")
 
-pets:AddTextBox("👾 Amount", function(text)
+pets:AddTextBox("Amount (Empty = Infinite)", function(text)
     targetAmount = tonumber(text) or 0
-    counterLabel:SetText(targetAmount > 0 and "Remaining: " .. targetAmount or "Mode: Infinite")
+    if targetAmount > 0 then
+        counterLabel:SetText("Target: " .. targetAmount .. " | Remaining: " .. targetAmount)
+    else
+        counterLabel:SetText("Mode: Infinite | Sent: 0")
+    end
 end)
 
-pets:AddSwitch("📫 Auto Trade", function(state)
+pets:AddSwitch("Auto Trade", function(state)
     running = state
-    totalSent = 0
-    if not state then counterLabel:SetText("Status: Stopped") return end
+    -- Switch'i ilk açtığında totalSent 0'dan başlasın
+    if state then 
+        totalSent = 0 
+    else
+        counterLabel:SetText("Status: Stopped")
+        return
+    end
 
     task.spawn(function()
         while running do
+            -- 1. Hedef Sayı Kontrolü
             if targetAmount > 0 and totalSent >= targetAmount then 
                 counterLabel:SetText("Status: Target Reached!")
-                
                 game:GetService("StarterGui"):SetCore("SendNotification", {
                     Title = "Goal Reached!",
-								
-                    Text = "You have reached " .. tostring(targetAmount) .. " target pets",
+                    Text = "Total " .. tostring(totalSent) .. " pets sent successfully.",
                     Duration = 5
                 })
-
-                running = false 
-                break 
+                running = false
+                break
             end
 
             if selectedTarget and selectedPet then
@@ -2019,40 +2026,61 @@ pets:AddSwitch("📫 Auto Trade", function(state)
                 if pf then
                     local folders = {pf:FindFirstChild("Basic"), pf:FindFirstChild("Advanced"), pf:FindFirstChild("Rare"), pf:FindFirstChild("Epic"), pf:FindFirstChild("Unique")}
                     
+                    -- İstek Gönderme
                     tradingEvent:FireServer("sendTradeRequest", selectedTarget)
-                    task.wait(0.8) 
+                    task.wait(1.5) -- Pencere açılış bekleme
 
-                    local offered = 0
+                    local offeredInThisTrade = 0
                     for _, folder in ipairs(folders) do
-                        if folder and running and offered < 6 then
+                        if folder and running and offeredInThisTrade < 6 then
                             for _, pet in ipairs(folder:GetChildren()) do
-                                if not running or offered >= 6 or (targetAmount > 0 and (totalSent + offered) >= targetAmount) then break end
+                                -- Döngü içi limit kontrolleri
+                                if not running or offeredInThisTrade >= 6 then break end
+                                if targetAmount > 0 and (totalSent + offeredInThisTrade) >= targetAmount then break end
+                                
                                 if pet.Name == selectedPet then
                                     tradingEvent:FireServer("offerItem", pet)
-                                    offered = offered + 1
-                                    task.wait(0.1) 
+                                    offeredInThisTrade = offeredInThisTrade + 1
+                                    task.wait(0.3) -- Pet ekleme hızı (Güvenli seviye)
                                 end
                             end
                         end
                     end
 
-                    if offered > 0 then
-                        task.wait(0.4)
+                    -- Onaylama ve Sayaç Güncelleme
+                    if offeredInThisTrade > 0 then
+                        task.wait(0.8) -- Accept butonu aktifleşme süresi
                         if running then
                             tradingEvent:FireServer("acceptTrade")
-                            totalSent = totalSent + offered
-                            counterLabel:SetText(targetAmount > 0 and "Remaining: " .. (targetAmount - totalSent) or "Sent Total: " .. totalSent)
+                            
+                            -- Burası can alıcı nokta: totalSent burada artıyor ve sayaç yenileniyor
+                            totalSent = totalSent + offeredInThisTrade
+                            
+                            if targetAmount > 0 then
+                                local remaining = targetAmount - totalSent
+                                counterLabel:SetText("Remaining: " .. (remaining > 0 and remaining or 0))
+                            else
+                                counterLabel:SetText("Sent Total: " .. totalSent)
+                            end
+                            
+                            -- Trade penceresinin kapanması ve oyunun veriyi işlemesi için bekle
+                            task.wait(2) 
                         end
                     else
-                        if targetAmount > 0 then 
-                            counterLabel:SetText("Status: Out of Pets!")
-                            running = false 
-                            break 
-                        end
+                        -- Pet bittiyse döngüyü kır
+                        counterLabel:SetText("Status: Out of Pets!")
+                        running = false
+                        break
                     end
                 end
+            else
+                -- Oyuncu veya Pet seçilmediyse bekle
+                counterLabel:SetText("Status: Select Player & Pet!")
+                task.wait(2)
             end
-            task.wait(1.2) 
+            
+            -- Her başarılı veya başarısız denemeden sonra kısa bir es verip loop'u başa sarar
+            task.wait(0.5)
         end
     end)
 end)
