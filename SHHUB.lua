@@ -1487,25 +1487,23 @@ function gettool()
             game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
         end
     end
-    -- Eventleri 2 kez ateşleyerek hızı artırıyoruz
+    
     game:GetService("Players").LocalPlayer.muscleEvent:FireServer("punch", "leftHand")
     game:GetService("Players").LocalPlayer.muscleEvent:FireServer("punch", "rightHand")
     game:GetService("Players").LocalPlayer.muscleEvent:FireServer("punch", "leftHand")
     game:GetService("Players").LocalPlayer.muscleEvent:FireServer("punch", "rightHand")
 end
 
--- Hızlandırılmış Rock Switchleri
 Rock:AddSwitch("💎 Tiny Rock 0", function(Value)
     selectrock = "Tiny Island Rock"
     getgenv().autoFarm = Value
     task.spawn(function()
         while getgenv().autoFarm do
-            task.wait(0.01) -- Bekleme süresinin 
+            task.wait(0.01)
             if not getgenv().autoFarm then break end
             if game:GetService("Players").LocalPlayer.Durability.Value >= 0 then
                 for i, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
                     if v.Name == "neededDurability" and v.Value == 0 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
-                        -- Vuruş hızı x3 yapıldı
                         for _ = 1, 3 do
                             firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
                             firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
@@ -1688,7 +1686,7 @@ Rock:AddSwitch("👑 Muscle King Rock 5M", function(Value)
     end)
 end)
 
-Rock:AddSwitch("🌳 Jungle Rock 10M", function(Value)
+Rock:AddSwitch("🌴 Jungle Rock 10M", function(Value)
     selectrock = "Ancient Jungle Rock"
     getgenv().autoFarm = Value
     task.spawn(function()
@@ -2025,14 +2023,14 @@ pets:AddSwitch("🔃 Auto Trade", function(state)
                         end
                     end
 
-                    task.wait(1.2) 
+                    task.wait(1.1) 
 
                     if running then
                         tradingEvent:FireServer("acceptTrade")
                     end
                 end
             end
-            task.wait(2.5) 
+            task.wait(2.6) 
         end
     end)
 end)
