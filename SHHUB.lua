@@ -265,6 +265,111 @@ toolFolder:AddSwitch("🧘 Situps + 🥊 Punch", function(bool)
     end
 end)
 
+local autoBrawl = false
+local godModeToggle = false
+local autoWinBrawl = false
+local parts = {}
+
+local function manageParts(state)
+    if state and #parts == 0 then
+        local partSize = 2048
+        local totalDistance = 50000
+        local startPosition = Vector3.new(-2, -9.5, -2)
+        local numberOfParts = math.ceil(totalDistance / partSize)
+        for x = 0, numberOfParts - 1 do
+            for z = 0, numberOfParts - 1 do
+                local positions = {
+                    startPosition + Vector3.new(x * partSize, 0, z * partSize),
+                    startPosition + Vector3.new(-x * partSize, 0, z * partSize),
+                    startPosition + Vector3.new(-x * partSize, 0, -z * partSize),
+                    startPosition + Vector3.new(x * partSize, 0, -z * partSize)
+                }
+                for _, pos in ipairs(positions) do
+                    local p = Instance.new("Part")
+                    p.Size = Vector3.new(partSize, 1, partSize)
+                    p.Position = pos
+                    p.Anchored = true
+                    p.Transparency = 1
+                    p.CanCollide = true
+                    p.Parent = workspace
+                    table.insert(parts, p)
+                end
+            end
+        end
+    elseif not state then
+        for _, p in ipairs(parts) do p.CanCollide = false end
+    else
+        for _, p in ipairs(parts) do p.CanCollide = true end
+    end
+end
+
+AutoFarm:AddLabel("----------------------------")
+AutoFarm:AddLabel("👊 Auto Brawl")
+
+AutoFarm:AddSwitch("🏆 Auto Join Brawl", function(state)
+    autoBrawl = state
+    task.spawn(function()
+        while autoBrawl do
+            game:GetService("ReplicatedStorage").rEvents.brawlEvent:FireServer("joinBrawl")
+            task.wait(5)
+        end
+    end)
+end)
+
+AutoFarm:AddSwitch("🛡️ God Mode", function(state)
+    godModeToggle = state
+    manageParts(state)
+    if state then
+        task.spawn(function()
+            while godModeToggle do
+                game:GetService("ReplicatedStorage").rEvents.brawlEvent:FireServer("joinBrawl")
+                task.wait(0)
+            end
+        end)
+    end
+end)
+
+AutoFarm:AddSwitch("⚔️ Auto Win Brawl", function(state)
+    autoWinBrawl = state
+    if state then
+        task.spawn(function()
+            while autoWinBrawl do
+                local lp = game:GetService("Players").LocalPlayer
+                local char = lp.Character
+                if char then
+                    local punch = lp.Backpack:FindFirstChild("Punch") or char:FindFirstChild("Punch")
+                    if punch then
+                        punch.Parent = char
+                        if punch:FindFirstChild("attackTime") then
+                            punch.attackTime.Value = 0
+                        end
+                        punch:Activate()
+                    end
+                    
+                    local rHand = char:FindFirstChild("RightHand")
+                    local lHand = char:FindFirstChild("LeftHand")
+                    if rHand and lHand then
+                        for _, target in ipairs(game:GetService("Players"):GetPlayers()) do
+                            if target ~= lp and target.Character then
+                                local root = target.Character:FindFirstChild("HumanoidRootPart")
+                                if root then
+                                    pcall(function()
+                                        firetouchinterest(rHand, root, 1)
+                                        firetouchinterest(lHand, root, 1)
+                                        firetouchinterest(rHand, root, 0)
+                                        firetouchinterest(lHand, root, 0)
+                                    end)
+                                end
+                            end
+                        end
+                    end
+                end
+                task.wait()
+            end
+        end)
+    end
+end)
+
 local rebirths = window:AddTab("Rebirths")
 
 rebirths:AddTextBox("🔢 Rebirth Target", function(text)
