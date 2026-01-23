@@ -2209,6 +2209,32 @@ createFarm(FrostFolder, "🦵 Auto Squat", CFrame.new(-2720.66, 27.85, -590.72),
 
 local Misc = window:AddTab("Misc")
 
+local function claimChests()
+    local lp = game:GetService("Players").LocalPlayer
+    local char = lp.Character
+    if char and char:FindFirstChild("HumanoidRootPart") then
+        local oldCF = char.HumanoidRootPart.CFrame
+        local chests = {
+            Vector3.new(42.25, 3.64, 408.91),    
+            Vector3.new(-138.43, 3.64, -276.86), 
+            Vector3.new(-2569.81, 3.64, -554.07),
+            Vector3.new(2206.88, 3.64, 910.50),  
+            Vector3.new(-6713.64, 3.64, -1456.67),
+            Vector3.new(4666.53, 997.35, -3692.08),
+            Vector3.new(-7913.11, 0.61, 3019.15) 
+        }
+        for _, pos in ipairs(chests) do
+            char.HumanoidRootPart.CFrame = CFrame.new(pos)
+            task.wait(0.2)
+        end
+        char.HumanoidRootPart.CFrame = oldCF
+    end
+end
+
+Misc:AddButton("📦 Auto Claim Chest", function()
+    claimChests()
+end)
+
 Misc:AddButton("🚀 FPS Booster", function()
     local lighting = game:GetService("Lighting")
     local terrain = game:GetService("Workspace"):FindFirstChildOfClass('Terrain')
