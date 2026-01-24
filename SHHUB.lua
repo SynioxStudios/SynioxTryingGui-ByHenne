@@ -1937,7 +1937,7 @@ tabFarming:AddSwitch("💢 Auto Strength Farm", function(bool)
     task.spawn(function()
         unequipAllPets()
         task.wait(0.1)
-        equipUniquePets("Swift Samurai")
+        equipUniquePet("Swift Samurai")
         while strengthOnly do
             for i = 1, 23 do 
                 muscleEvent:FireServer("rep")
