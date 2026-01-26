@@ -530,6 +530,65 @@ rebirths:AddSwitch("👁️‍🗨️ Hide All Frames", function(bool)
     end
 end)
 
+if _G.MarketLoaded then return end
+_G.MarketLoaded = true
+
+local selectedItemInternal = nil
+local selectedItemDisplay = ""
+
+local shopItems = {
+    ["+5% Rep Speed"] = "RepSpeed",
+    ["+1 Pet Slot"] = "PetSlot",
+    ["+10 Item Capacity"] = "ItemCapacity",
+    ["+1 Daily Spin"] = "DailySpin",
+    ["x2 Chest Rewards"] = "ChestRewards",
+    ["x2 Quest Rewards"] = "QuestRewards",
+    ["Muscle Mind"] = "MuscleMind",
+    ["Jungle Swift"] = "Jungle Swift",
+    ["Infernal Health"] = "Infernal Health",
+    ["Galaxy Gains"] = "Galaxy Gains",
+    ["Demon Damage"] = "Demon Damage",
+    ["Golden Rebirth"] = "Golden Rebirth"
+}
+
+local itemNames = {}
+for displayName, _ in pairs(shopItems) do
+    table.insert(itemNames, displayName)
+end
+
+local marketDropdown = rebirths:AddDropdown("📦 Select Item", function(name)
+    selectedItemDisplay = name
+    selectedItemInternal = shopItems[name]
+end)
+
+for _, name in ipairs(itemNames) do
+    marketDropdown:Add(name)
+end
+
+rebirths:AddSwitch("🛒 Buy Selected Item", function(state)
+    if state then
+        if selectedItemInternal then
+            game:GetService("StarterGui"):SetCore("SendNotification", {
+                Title = "SHOP",
+                Text = "Purchasing: " .. selectedItemDisplay,
+                Duration = 3
+            })
+            
+            pcall(function()
+                game:GetService("ReplicatedStorage").rEvents.ultimatesRemote:InvokeServer("upgradeUltimate", selectedItemInternal)
+            end)
+        else
+            game:GetService("StarterGui"):SetCore("SendNotification", {
+                Title = "ERROR",
+                Text = "Please select an item first!",
+                Duration = 3
+            })
+        end
+        
+        task.wait(0.5)
+    end
+end)
+
 local autoEquipToolsFolder = rebirths:AddFolder(" 🎒 Auto Equip Tools")
 
 autoEquipToolsFolder:AddButton("💎 Gamepass AutoLift", function()
@@ -3135,3 +3194,4 @@ task.spawn(function()
 end)
 
 credits:AddLabel("==================================")
+
