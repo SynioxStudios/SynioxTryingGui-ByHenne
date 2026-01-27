@@ -179,90 +179,49 @@ local LocalPlayer = Players.LocalPlayer
 
 local toolFolder = AutoFarm:AddFolder(" 💨 OP Tools")
 
-local function manageTool(toolName)
+local function manageToolCombo(toolName)
     task.spawn(function()
         while _G[toolName.."On"] do
             local character = LocalPlayer.Character
             if character then
+                local punch = LocalPlayer.Backpack:FindFirstChild("Punch") or character:FindFirstChild("Punch")
                 local tool = LocalPlayer.Backpack:FindFirstChild(toolName) or character:FindFirstChild(toolName)
+
+                if punch then
+                    punch.Parent = character
+                    if punch:FindFirstChild("attackTime") then punch.attackTime.Value = 0 end
+                    punch:Activate()
+                end
+
                 if tool then
-                    if tool.Parent ~= character then
-                        tool.Parent = character
-                    end
-                    if toolName == "Punch" then
-                        if tool:FindFirstChild("attackTime") then
-                            tool.attackTime.Value = 0
-                        end
-                        tool:Activate()
-                    else
-                        local event = LocalPlayer:FindFirstChild("muscleEvent")
-                        if event then
-                            event:FireServer("rep")
-                        else
-                            tool:Activate()
-                        end
-                    end
+                    tool.Parent = character
+                    local event = LocalPlayer:FindFirstChild("muscleEvent")
+                    if event then event:FireServer("rep") end
                 end
             end
-            task.wait(0.05)
+            task.wait() 
         end
     end)
 end
 
 toolFolder:AddSwitch("🏋️ Weight + 🥊 Punch", function(bool)
     _G.WeightOn = bool
-    _G.PunchOn = bool
-    if bool then 
-        manageTool("Weight")
-        manageTool("Punch")
-    else
-        local wTool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Weight")
-        local pTool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Punch")
-        if wTool then wTool.Parent = LocalPlayer.Backpack end
-        if pTool then pTool.Parent = LocalPlayer.Backpack end
-    end
+    if bool then manageToolCombo("Weight") end
 end)
 
 toolFolder:AddSwitch("💪 Pushups + 🥊 Punch", function(bool)
     _G.PushupsOn = bool
-    _G.PunchOn = bool
-    if bool then 
-        manageTool("Pushups")
-        manageTool("Punch")
-    else
-        local pTool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Pushups")
-        local puTool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Punch")
-        if pTool then pTool.Parent = LocalPlayer.Backpack end
-        if puTool then puTool.Parent = LocalPlayer.Backpack end
-    end
+    if bool then manageToolCombo("Pushups") end
 end)
 
 toolFolder:AddSwitch("🤸 Handstand + 🥊 Punch", function(bool)
     _G.HandstandOn = bool
-    _G.PunchOn = bool
-    if bool then 
-        manageTool("Handstand")
-        manageTool("Punch")
-    else
-        local hTool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Handstand")
-        local pTool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Punch")
-        if hTool then hTool.Parent = LocalPlayer.Backpack end
-        if pTool then pTool.Parent = LocalPlayer.Backpack end
-    end
+    if bool then manageToolCombo("Handstand") end
 end)
 
 toolFolder:AddSwitch("🧘 Situps + 🥊 Punch", function(bool)
     _G.SitupsOn = bool
-    _G.PunchOn = bool
-    if bool then 
-        manageTool("Situps")
-        manageTool("Punch")
-    else
-        local sTool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Situps")
-        local pTool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Punch")
-        if sTool then sTool.Parent = LocalPlayer.Backpack end
-        if pTool then pTool.Parent = LocalPlayer.Backpack end
-    end
+    if bool then manageToolCombo("Situps") end
 end)
 
 local autoBrawl = false
@@ -535,6 +494,7 @@ _G.MarketLoaded = true
 
 local selectedItemInternal = nil
 local selectedItemDisplay = ""
+local autoBuyActive = false
 
 local shopItems = {
     ["+5% Rep Speed"] = "RepSpeed",
@@ -544,48 +504,48 @@ local shopItems = {
     ["x2 Chest Rewards"] = "ChestRewards",
     ["x2 Quest Rewards"] = "QuestRewards",
     ["Muscle Mind"] = "MuscleMind",
-    ["Jungle Swift"] = "Jungle Swift",
-    ["Infernal Health"] = "Infernal Health",
-    ["Galaxy Gains"] = "Galaxy Gains",
-    ["Demon Damage"] = "Demon Damage",
-    ["Golden Rebirth"] = "Golden Rebirth"
+    ["Jungle Swift"] = "JungleSwift",
+    ["Infernal Health"] = "InfernalHealth",
+    ["Galaxy Gains"] = "GalaxyGains",
+    ["Demon Damage"] = "DemonDamage",
+    ["Golden Rebirth"] = "GoldenRebirth"
 }
-
-local itemNames = {}
-for displayName, _ in pairs(shopItems) do
-    table.insert(itemNames, displayName)
-end
 
 local marketDropdown = rebirths:AddDropdown("📦 Select Item", function(name)
     selectedItemDisplay = name
     selectedItemInternal = shopItems[name]
 end)
 
-for _, name in ipairs(itemNames) do
-    marketDropdown:Add(name)
+for displayName, _ in pairs(shopItems) do
+    marketDropdown:Add(displayName)
 end
 
-rebirths:AddSwitch("🛒 Buy Selected Item", function(state)
-    if state then
-        if selectedItemInternal then
-            game:GetService("StarterGui"):SetCore("SendNotification", {
-                Title = "SHOP",
-                Text = "Purchasing: " .. selectedItemDisplay,
-                Duration = 3
-            })
-            
-            pcall(function()
-                game:GetService("ReplicatedStorage").rEvents.ultimatesRemote:InvokeServer("upgradeUltimate", selectedItemInternal)
-            end)
-        else
+rebirths:AddSwitch("🔄 Auto Buy Selected", function(state)
+    autoBuyActive = state
+    if autoBuyActive then
+        if not selectedItemInternal then
             game:GetService("StarterGui"):SetCore("SendNotification", {
                 Title = "ERROR",
                 Text = "Please select an item first!",
                 Duration = 3
             })
+            return
         end
-        
-        task.wait(0.5)
+
+        task.spawn(function()
+            game:GetService("StarterGui"):SetCore("SendNotification", {
+                Title = "AUTO BUY",
+                Text = "Waiting for requirements for: " .. selectedItemDisplay,
+                Duration = 3
+            })
+
+            while autoBuyActive do
+                pcall(function()
+                    game:GetService("ReplicatedStorage").rEvents.ultimatesRemote:InvokeServer("upgradeUltimate", selectedItemInternal)
+                end)
+                task.wait(1)
+            end
+        end)
     end
 end)
 
