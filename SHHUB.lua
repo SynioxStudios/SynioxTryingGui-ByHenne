@@ -2414,14 +2414,14 @@ local MuscleKingFolder = GymTab:AddFolder(" 👑 Muscle King")
 createFarm(MuscleKingFolder, "🏋️ Auto Lift", CFrame.new(-8774.03, 52.15, -5664.10), "rep")
 createFarm(MuscleKingFolder, "💪 Auto Bench Press", CFrame.new(-8589.43, 58.00, -6044.57), "rep")
 createFarm(MuscleKingFolder, "🦵 Auto Squat", CFrame.new(-8759.62, 46.50, -6041.16), "rep")
-createFarm(MuscleKingFolder, "🗿 Auto Boulder", CFrame.new(-8942.97, 60.71, -5692.74), "rep")
+createFarm(MuscleKingFolder, "Auto Boulder", CFrame.new(-8942.97, 60.71, -5692.74), "rep")
 
 -- 3. LEGENDS GYM
 local LegendsFolder = GymTab:AddFolder(" 🌟 Legends Gym")
 createFarm(LegendsFolder, "🏋️ Auto Lift", CFrame.new(4532.02, 1025.80, -4002.15), "rep")
 createFarm(LegendsFolder, "💪 Auto Bench Press", CFrame.new(4109.20, 1035.67, -3802.88), "rep")
 createFarm(LegendsFolder, "🦵 Auto Squat", CFrame.new(4438.74, 1021.38, -4058.46), "rep")
-createFarm(LegendsFolder, "🪨 Auto Boulder", CFrame.new(4188.75, 1019.85, -3905.19), "rep")
+createFarm(LegendsFolder, "Auto Boulder", CFrame.new(4188.75, 1019.85, -3905.19), "rep")
 
 -- 4. MYTHICAL GYM
 local MythicalFolder = GymTab:AddFolder(" 🔮 Mythical Gym")
