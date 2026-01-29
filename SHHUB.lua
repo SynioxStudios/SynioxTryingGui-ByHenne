@@ -1479,7 +1479,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local LocalPlayer = Players.LocalPlayer
 
-Gift:AddLabel("Gifting System").TextSize = 22
+Gift:AddLabel("🎁 Gifting System")
 
 local proteinEggLabel = Gift:AddLabel("Protein Eggs: 0")
 local tropicalShakeLabel = Gift:AddLabel("Tropical Shakes: 0")
@@ -1489,6 +1489,7 @@ local eggCount = 0
 local selectedShakePlayer = nil
 local shakeCount = 0
 
+-- Oyuncu seçim dropdownları
 local eggDropdown = Gift:AddDropdown("Player to Gift Eggs", function(selectedDisplayName)
     for _, plr in ipairs(Players:GetPlayers()) do
         if plr.DisplayName == selectedDisplayName then
@@ -1507,6 +1508,7 @@ local shakeDropdown = Gift:AddDropdown("Player to Gift Tropical Shakes", functio
     end
 end)
 
+-- Dropdown listesini güncel tutan fonksiyon
 local function updateDropdowns()
     eggDropdown:Clear()
     shakeDropdown:Clear()
@@ -1522,6 +1524,7 @@ updateDropdowns()
 Players.PlayerAdded:Connect(updateDropdowns)
 Players.PlayerRemoving:Connect(updateDropdowns)
 
+-- Protein Egg Hediye Kısmı
 Gift:AddTextBox("Amount of Eggs", function(text)
     eggCount = tonumber(text) or 0
 end)
@@ -1538,6 +1541,7 @@ Gift:AddButton("Gift Eggs", function()
     end
 end)
 
+-- Tropical Shake Hediye Kısmı
 Gift:AddTextBox("Amount of Shakes", function(text)
     shakeCount = tonumber(text) or 0
 end)
@@ -1554,6 +1558,7 @@ Gift:AddButton("Gift Tropical Shakes", function()
     end
 end)
 
+-- Sayaç Döngüsü (Sadece Çantayı Sayar)
 task.spawn(function()
     while true do
         local pCount = 0
@@ -1569,7 +1574,6 @@ task.spawn(function()
 end)
 
 Gift:AddLabel("----------------------------")
-Gift:AddLabel("YouTube Tanıtımı: Script kanalımızda!")
 Gift:AddLabel("Discord: https://discord.gg/FsG2cGay")
 
 local LookDura = window:AddTab("Stats")
