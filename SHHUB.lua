@@ -761,6 +761,100 @@ local sessionStartRebirths = 0
 local sessionStartBrawls = 0
 local hasStartedTracking = false
 
+local Gift = window:AddTab("Gift")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local LocalPlayer = Players.LocalPlayer
+
+Gift:AddLabel("Gifting System").TextSize = 20
+
+local proteinEggLabel = Gift:AddLabel("Protein Eggs: 0")
+local tropicalShakeLabel = Gift:AddLabel("Tropical Shakes: 0")
+
+local selectedEggPlayer = nil
+local eggCount = 0
+local selectedShakePlayer = nil
+local shakeCount = 0
+
+local eggDropdown = Gift:AddDropdown("Select Player Gift Egg", function(selectedDisplayName)
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr.DisplayName == selectedDisplayName then
+            selectedEggPlayer = plr
+            break
+        end
+    end
+end)
+
+local shakeDropdown = Gift:AddDropdown("Select Player Gift Shake", function(selectedDisplayName)
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr.DisplayName == selectedDisplayName then
+            selectedShakePlayer = plr
+            break
+        end
+    end
+end)
+
+local function updateDropdowns()
+    eggDropdown:Clear()
+    shakeDropdown:Clear()
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= LocalPlayer then
+            eggDropdown:Add(plr.DisplayName)
+            shakeDropdown:Add(plr.DisplayName)
+        end
+    end
+end
+
+updateDropdowns()
+Players.PlayerAdded:Connect(updateDropdowns)
+Players.PlayerRemoving:Connect(updateDropdowns)
+
+Gift:AddTextBox("Amount of Eggs", function(text)
+    eggCount = tonumber(text) or 0
+end)
+
+Gift:AddButton("Gift Eggs", function()
+    if selectedEggPlayer and eggCount > 0 then
+        for i = 1, eggCount do
+            local egg = LocalPlayer.consumablesFolder:FindFirstChild("Protein Egg")
+            if egg then
+                ReplicatedStorage.rEvents.giftRemote:InvokeServer("giftRequest", selectedEggPlayer, egg)
+                task.wait(0.1)
+            end
+        end
+    end
+end)
+
+Gift:AddTextBox("Amount of Shakes", function(text)
+    shakeCount = tonumber(text) or 0
+end)
+
+Gift:AddButton("Gift Tropical Shakes", function()
+    if selectedShakePlayer and shakeCount > 0 then
+        for i = 1, shakeCount do
+            local shake = LocalPlayer.consumablesFolder:FindFirstChild("Tropical Shake")
+            if shake then
+                ReplicatedStorage.rEvents.giftRemote:InvokeServer("giftRequest", selectedShakePlayer, shake)
+                task.wait(0.1)
+            end
+        end
+    end
+end)
+
+task.spawn(function()
+    while true do
+        local pCount = 0
+        local sCount = 0
+        for _, item in ipairs(LocalPlayer.Backpack:GetChildren()) do
+            if item.Name == "Protein Egg" then pCount = pCount + 1
+            elseif item.Name == "Tropical Shake" then sCount = sCount + 1 end
+        end
+        proteinEggLabel.Text = "Protein Eggs: " .. pCount
+        tropicalShakeLabel.Text = "Tropical Shakes: " .. sCount
+        task.wait(0.3)
+    end
+end)
+
 local Killer = window:AddTab("Kill")
 
 local Players = game:GetService("Players")
